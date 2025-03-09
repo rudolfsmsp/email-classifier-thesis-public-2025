@@ -10,8 +10,7 @@ def main():
     subprocess.run(["python", "create_master_url_dataset.py"])
     subprocess.run(["python", "train_email_classifier.py"])
     print("[INFO] environment setup complete. launching interface...")
-    os.system("pkill -f streamlit")
-    subprocess.Popen(["streamlit", "run", "interface.py", "--server.headless", "true", "--server.port", "8501"])
+    subprocess.Popensubprocess.Popen(["streamlit", "run", "interface.py", "--server.headless", "true"])
     print("[SUCCESS] interface launched successfully.")
     try:
         while True:
