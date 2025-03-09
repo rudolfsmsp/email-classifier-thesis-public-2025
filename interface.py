@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 import subprocess
+import time
 from model_loader import predict_email
 from url_utils import extract_urls, check_urls
 
