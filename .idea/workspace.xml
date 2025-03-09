@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="907deb6d-a564-4229-8a63-d0891ba2896f" name="Changes" comment="Fixing bugs V3">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="907deb6d-a564-4229-8a63-d0891ba2896f" name="Changes" comment="Fixing bugs V3" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,7 +18,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/email-classifier-thesis" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -30,7 +28,7 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/rudolfsmsp/email-classifier-thesis.git&quot;,
+    &quot;url&quot;: &quot;https://github.com/rudolfsmsp/email-classifier-thesis&quot;,
     &quot;accountId&quot;: &quot;e278b8f4-4dd3-4baf-8db8-8ec1e1b7284b&quot;
   }
 }</component>
@@ -67,7 +65,7 @@
     &quot;Python.virus_total_test.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Rūdolfs Mušperts/PycharmProjects/email-classifier-thesis/data/grega_phishing_urls&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;advanced.settings&quot;
