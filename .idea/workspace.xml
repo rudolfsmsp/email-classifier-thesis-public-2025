@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="907deb6d-a564-4229-8a63-d0891ba2896f" name="Changes" comment="Fixing bugs V3" />
+    <list default="true" id="907deb6d-a564-4229-8a63-d0891ba2896f" name="Changes" comment="Added requirements.txt" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -18,7 +18,8 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/email-classifier-thesis" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -41,36 +42,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.clean_datasets.executor&quot;: &quot;Run&quot;,
-    &quot;Python.clean_urls.executor&quot;: &quot;Run&quot;,
-    &quot;Python.clone_github.executor&quot;: &quot;Run&quot;,
-    &quot;Python.convert_mbox_to_csv.executor&quot;: &quot;Run&quot;,
-    &quot;Python.create_master_email_dataset.executor&quot;: &quot;Run&quot;,
-    &quot;Python.create_master_url_dataset.executor&quot;: &quot;Run&quot;,
-    &quot;Python.create_unified_email_dataset.executor&quot;: &quot;Run&quot;,
-    &quot;Python.create_unified_url_dataset.executor&quot;: &quot;Run&quot;,
-    &quot;Python.dataset_info_print.executor&quot;: &quot;Run&quot;,
-    &quot;Python.email_checker.executor&quot;: &quot;Run&quot;,
-    &quot;Python.email_url_checker.executor&quot;: &quot;Run&quot;,
-    &quot;Python.important_external_tool_testing_data.executor&quot;: &quot;Run&quot;,
-    &quot;Python.interface.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.model_loader.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.train_email_classifier.executor&quot;: &quot;Run&quot;,
-    &quot;Python.unified_dataset_info_print.executor&quot;: &quot;Run&quot;,
-    &quot;Python.url_utils.executor&quot;: &quot;Run&quot;,
-    &quot;Python.virus_total_test.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Rūdolfs Mušperts/PycharmProjects/email-classifier-thesis/data/grega_phishing_urls&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;advanced.settings&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.clean_datasets.executor": "Run",
+    "Python.clean_urls.executor": "Run",
+    "Python.clone_github.executor": "Run",
+    "Python.convert_mbox_to_csv.executor": "Run",
+    "Python.create_master_email_dataset.executor": "Run",
+    "Python.create_master_url_dataset.executor": "Run",
+    "Python.create_unified_email_dataset.executor": "Run",
+    "Python.create_unified_url_dataset.executor": "Run",
+    "Python.dataset_info_print.executor": "Run",
+    "Python.email_checker.executor": "Run",
+    "Python.email_url_checker.executor": "Run",
+    "Python.important_external_tool_testing_data.executor": "Run",
+    "Python.interface.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.model_loader.executor": "Run",
+    "Python.test.executor": "Run",
+    "Python.train_email_classifier.executor": "Run",
+    "Python.unified_dataset_info_print.executor": "Run",
+    "Python.url_utils.executor": "Run",
+    "Python.virus_total_test.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/Rūdolfs Mušperts/PycharmProjects/email-classifier-thesis/data/grega_phishing_urls",
+    "settings.editor.selected.configurable": "advanced.settings"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Rūdolfs Mušperts\PycharmProjects\email-classifier-thesis\data\grega_phishing_urls" />
@@ -201,7 +202,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741525520705</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Added requirements.txt">
+      <option name="closed" value="true" />
+      <created>1741539647515</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1741539647515</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -213,7 +222,8 @@
     <MESSAGE value="Balancing the safe/spam, improving phising so also just domains work and rewriting the prints." />
     <MESSAGE value="Adding the UI" />
     <MESSAGE value="Fixing bugs V1" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixing bugs V1" />
+    <MESSAGE value="Added requirements.txt" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added requirements.txt" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
