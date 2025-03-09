@@ -1,22 +1,30 @@
 import subprocess
-import time
+import os
 
-# processes environment setup and launches the interface
-def main():
-    print("[INFO] starting environment setup...")
-    subprocess.run(["python", "create_unified_email_dataset.py"])
-    subprocess.run(["python", "create_master_email_dataset.py"])
-    subprocess.run(["python", "create_unified_url_dataset.py"])
-    subprocess.run(["python", "create_master_url_dataset.py"])
-    subprocess.run(["python", "train_email_classifier.py"])
-    print("[INFO] environment setup complete. launching interface...")
-   subprocess.Popen(["streamlit", "run", "interface.py", "--server.headless", "true"])
-    print("[SUCCESS] interface launched successfully.")
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print("[INFO] exiting...")
+def setup_environment():
+    print("[INFO] Running dataset preparation...")
+    scripts = [
+        "create_unified_email_dataset.py",
+        "create_master_email_dataset.py",
+        "create_unified_url_dataset.py",
+        "create_master_url_dataset.py",
+        "train_email_classifier.py"
+    ]
+    for script in scripts:
+        if os.path.exists(script):
+            print(f"[INFO] Running {script}...")
+            result = subprocess.run(["python", script], capture_output=True, text=True)
+            if result.returncode != 0:
+                print(f"[ERROR] {script} failed with error:\n{result.stderr}")
+            else:
+                print(f"[SUCCESS] {script} completed.")
+        else:
+            print(f"[WARNING] {script} not found, skipping.")
+
+def launch_streamlit():
+    print("[INFO] Launching Streamlit app...")
+    subprocess.run(["streamlit", "run", "interface.py", "--server.headless", "true"])
 
 if __name__ == "__main__":
-    main()
+    setup_environment()
+    launch_streamlit()
