@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="907deb6d-a564-4229-8a63-d0891ba2896f" name="Changes" comment="Fixing bugs V3">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;rudolfsmsp&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/rudolfsmsp/email-classifier-thesis.git&quot;,
+    &quot;accountId&quot;: &quot;e278b8f4-4dd3-4baf-8db8-8ec1e1b7284b&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="2t7Ka2ehybthBXpoqujpdOD0rgf" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.clean_datasets.executor&quot;: &quot;Run&quot;,
+    &quot;Python.clean_urls.executor&quot;: &quot;Run&quot;,
+    &quot;Python.clone_github.executor&quot;: &quot;Run&quot;,
+    &quot;Python.convert_mbox_to_csv.executor&quot;: &quot;Run&quot;,
+    &quot;Python.create_master_email_dataset.executor&quot;: &quot;Run&quot;,
+    &quot;Python.create_master_url_dataset.executor&quot;: &quot;Run&quot;,
+    &quot;Python.create_unified_email_dataset.executor&quot;: &quot;Run&quot;,
+    &quot;Python.create_unified_url_dataset.executor&quot;: &quot;Run&quot;,
+    &quot;Python.dataset_info_print.executor&quot;: &quot;Run&quot;,
+    &quot;Python.email_checker.executor&quot;: &quot;Run&quot;,
+    &quot;Python.email_url_checker.executor&quot;: &quot;Run&quot;,
+    &quot;Python.important_external_tool_testing_data.executor&quot;: &quot;Run&quot;,
+    &quot;Python.interface.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.model_loader.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.train_email_classifier.executor&quot;: &quot;Run&quot;,
+    &quot;Python.unified_dataset_info_print.executor&quot;: &quot;Run&quot;,
+    &quot;Python.url_utils.executor&quot;: &quot;Run&quot;,
+    &quot;Python.virus_total_test.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Rūdolfs Mušperts/PycharmProjects/email-classifier-thesis/data/grega_phishing_urls&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;advanced.settings&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Rūdolfs Mušperts\PycharmProjects\email-classifier-thesis\data\grega_phishing_urls" />
+      <recent name="C:\Users\Rūdolfs Mušperts\PycharmProjects\email-classifier-thesis\data" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Rūdolfs Mušperts\PycharmProjects\email-classifier-thesis" />
+      <recent name="C:\Users\Rūdolfs Mušperts\PycharmProjects\email-classifier-thesis\data\suhasmaddali_emails" />
+      <recent name="C:\Users\Rūdolfs Mušperts\PycharmProjects\email-classifier-thesis\data\wiechmann_emails" />
+      <recent name="C:\Users\Rūdolfs Mušperts\PycharmProjects\email-classifier-thesis\data\phiusill_phishing_urls" />
+      <recent name="C:\Users\Rūdolfs Mušperts\PycharmProjects\email-classifier-thesis\data\tarun_phishing_urls" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="create_unified_email_dataset" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="email-classifier-thesis" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="C:\Users\Rūdolfs Mušperts\PycharmProjects\email-classifier-thesis\create_unified_email_dataset.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.create_unified_email_dataset" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-fc1d50d2d915-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.24978.54" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="907deb6d-a564-4229-8a63-d0891ba2896f" name="Changes" comment="" />
+      <created>1739697733821</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1739697733821</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Adding the datasets, creating clone github .py file">
+      <option name="closed" value="true" />
+      <created>1739826913011</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1739826913011</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Changing existing data email datasets, adding phishing/safe datasets, cleaning them up and creating 2 unified datasets for both">
+      <option name="closed" value="true" />
+      <created>1740080361452</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1740080361452</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Changing existing data email datasets, adding phishing/safe datasets, cleaning them up and creating 2 unified datasets for both">
+      <option name="closed" value="true" />
+      <created>1740080513534</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1740080513534</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Changing existing data email datasets, adding phishing/safe datasets, cleaning them up and creating 2 unified datasets for both">
+      <option name="closed" value="true" />
+      <created>1740080541796</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1740080541796</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Changing existing data email datasets, adding phishing/safe datasets, cleaning them up and creating 2 unified datasets for both">
+      <option name="closed" value="true" />
+      <created>1740080587704</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1740080587704</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Balancing the safe/spam, improving phising so also just domains work and rewriting the prints.">
+      <option name="closed" value="true" />
+      <created>1741125484795</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1741125484795</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Adding the UI">
+      <option name="closed" value="true" />
+      <created>1741482820630</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1741482820630</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Adding the UI">
+      <option name="closed" value="true" />
+      <created>1741482853023</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1741482853023</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Fixing bugs V1">
+      <option name="closed" value="true" />
+      <created>1741525520705</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1741525520705</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
+    <servers />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.csv" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Adding the datasets, creating clone github .py file" />
+    <MESSAGE value="Changing existing data email datasets, adding phishing/safe datasets, cleaning them up and creating 2 unified datasets for both" />
+    <MESSAGE value="Balancing the safe/spam, improving phising so also just domains work and rewriting the prints." />
+    <MESSAGE value="Adding the UI" />
+    <MESSAGE value="Fixing bugs V1" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixing bugs V1" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/train_email_classifier.py</url>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
