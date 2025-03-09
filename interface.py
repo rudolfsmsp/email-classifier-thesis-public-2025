@@ -1,22 +1,26 @@
 import streamlit as st
+import pandas as pd
+import os
 import subprocess
 from model_loader import predict_email
 from url_utils import extract_urls, check_urls
-
-import subprocess
 
 def store_user_provided_email(email_text, label):
     label_map = {"Safe Email": 0, "Spam Email": 1, "Phishing Email": 2}
     normalized_label = label.title()
     if normalized_label in label_map:
-        with open("user_provided_emails.csv", "a", encoding="utf-8") as f:
+        file_path = "user_provided_emails.csv"
+        if os.path.exists(file_path):
+            df = pd.read_csv(file_path, names=["email_text", "label", "label_id"])
+            if (df["email_text"] == email_text).any():
+                st.warning("This email has already been stored.")
+                return
+        with open(file_path, "a", encoding="utf-8") as f:
             f.write(f"{email_text},{normalized_label},{label_map[normalized_label]}\n")
         st.success("User-provided email stored.")
-
-        # Push updates to GitHub asynchronously
-        subprocess.Popen(["git", "add", "user_provided_emails.csv"])
-        subprocess.Popen(["git", "commit", "-m", "Auto-update user emails"])
-        subprocess.Popen(["git", "push", "origin", "main"])
+        subprocess.run(["git", "add", "user_provided_emails.csv"])
+        subprocess.run(["git", "commit", "-m", "Auto-update user emails"], check=True)
+        subprocess.run(["git", "push", "origin", "main"], check=True)
     else:
         st.error("Invalid label. Email not stored.")
 
