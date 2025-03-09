@@ -62,16 +62,21 @@ def load_phishing_urls():
         print(f"[ERROR] failed to load phishing database ({e}). returning empty set.")
         return set()
 
-# extracts urls and domains from the given text and returns a list of both
+# extracts both full URLs and raw domain names from text
 def extract_urls(text):
-    urls = re.findall(r"https?://\S+|www\.\S+", text)
+    url_pattern = re.compile(r'https?://\S+|www\.\S+|(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}')
+    extracted = re.findall(url_pattern, text)
     extracted_domains = set()
-    for url in urls:
-        try:
-            extracted_domains.add(url.split("/")[2])
-        except IndexError:
-            pass
-    return urls + list(extracted_domains)
+    for item in extracted:
+        if item.startswith(("http://", "https://", "www.")):
+            try:
+                domain = item.split("/")[2]
+                extracted_domains.add(domain)
+            except IndexError:
+                pass
+        else:
+            extracted_domains.add(item)
+    return list(set(extracted) | extracted_domains)  # Remove duplicates
 
 # checks if any extracted url or domain is in the master dataset or in the phishing database and returns a risk tuple
 def check_urls(urls):
