@@ -12,9 +12,11 @@ def store_user_provided_email(email_text, label):
         with open("user_provided_emails.csv", "a", encoding="utf-8") as f:
             f.write(f"{email_text},{normalized_label},{label_map[normalized_label]}\n")
         st.success("User-provided email stored.")
-        subprocess.run(["git", "add", "user_provided_emails.csv"])
-        subprocess.run(["git", "commit", "-m", "Auto-update user emails"])
-        subprocess.run(["git", "push", "origin", "main"])
+
+        # Push updates to GitHub asynchronously
+        subprocess.Popen(["git", "add", "user_provided_emails.csv"])
+        subprocess.Popen(["git", "commit", "-m", "Auto-update user emails"])
+        subprocess.Popen(["git", "push", "origin", "main"])
     else:
         st.error("Invalid label. Email not stored.")
 
@@ -27,19 +29,24 @@ def store_user_provided_urls(urls, risk_value, risk_source):
     st.success("User-provided URLs stored.")
 
 def reset_classification():
-    st.session_state.predicted=False
-    st.session_state.predicted_label=None
-    st.session_state.final_prob=None
-    st.session_state.warning_message=None
+    st.session_state.predicted = False
+    st.session_state.predicted_label = None
+    st.session_state.final_prob = None
+    st.session_state.warning_message = None
+    st.session_state.retraining = False
 
 def retrain_model():
-    try:
-        subprocess.run(["python","create_master_email_dataset.py"],check=True)
-        subprocess.run(["python","create_master_url_dataset.py"],check=True)
-        subprocess.run(["python","train_email_classifier.py"],check=True)
-        st.success("Model retrained successfully.")
-    except Exception as e:
-        st.error(f"Retraining failed: {e}")
+    st.session_state.retraining = True  # Start loading
+    with st.spinner("Retraining model..."):
+        try:
+            subprocess.run(["python", "create_master_email_dataset.py"], check=True)
+            subprocess.run(["python", "create_master_url_dataset.py"], check=True)
+            subprocess.run(["python", "train_email_classifier.py"], check=True)
+            st.success("Model retrained successfully.")
+        except Exception as e:
+            st.error(f"Retraining failed: {e}")
+    st.session_state.retraining = False
+    st.experimental_rerun()
 
 def main():
     st.set_page_config(page_title="Email Classifier",layout="centered")
@@ -134,9 +141,11 @@ def main():
                     store_user_provided_urls(st.session_state["urls"],st.session_state["risk_value"],st.session_state["risk_source"])
                 retrain_model()
                 reset_classification()
-        if st.button("Try Again"):
-            reset_classification()
-            st.experimental_rerun()
+        if not st.session_state.get("retraining", False):
+            if st.button("Try Again"):
+                reset_classification()
+                st.experimental_rerun()
+
     st.markdown("</div>",unsafe_allow_html=True)
 
 if __name__=="__main__":
