@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="907deb6d-a564-4229-8a63-d0891ba2896f" name="Changes" comment="Added requirements.txt" />
+    <list default="true" id="907deb6d-a564-4229-8a63-d0891ba2896f" name="Changes" comment="Updated main.py">
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -210,7 +212,31 @@
       <option name="project" value="LOCAL" />
       <updated>1741539647515</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Updated main.py">
+      <option name="closed" value="true" />
+      <created>1741540131612</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1741540131612</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Updated main.py">
+      <option name="closed" value="true" />
+      <created>1741540235735</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1741540235735</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Updated main.py">
+      <option name="closed" value="true" />
+      <created>1741540334027</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1741540334027</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -223,7 +249,8 @@
     <MESSAGE value="Adding the UI" />
     <MESSAGE value="Fixing bugs V1" />
     <MESSAGE value="Added requirements.txt" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added requirements.txt" />
+    <MESSAGE value="Updated main.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated main.py" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
