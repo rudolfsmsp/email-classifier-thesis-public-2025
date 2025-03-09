@@ -25,13 +25,32 @@ def store_user_provided_email(email_text, label):
     else:
         st.error("Invalid label. Email not stored.")
 
+
 def store_user_provided_urls(urls, risk_value, risk_source):
     if not urls:
         return
-    with open("user_provided_urls.csv","a",encoding="utf-8") as f:
+    existing_urls = set()
+
+    try:
+        with open("user_provided_urls.csv", "r", encoding="utf-8") as f:
+            existing_urls = {line.strip().split(",")[0] for line in f if line.strip()}
+    except FileNotFoundError:
+        pass
+
+    new_entries = []
+    with open("user_provided_urls.csv", "a", encoding="utf-8") as f:
         for url in urls:
-            f.write(f"{url},{risk_value}\n")
-    st.success("User-provided URLs stored.")
+            if url not in existing_urls:
+                entry = f"{url},{risk_value},{risk_source}\n"
+                f.write(entry)
+                new_entries.append(entry)
+
+    if new_entries:
+        st.success("User-provided URLs stored.")
+
+        subprocess.Popen(["git", "add", "user_provided_urls.csv"])
+        subprocess.Popen(["git", "commit", "-m", "Auto-update user-provided URLs"])
+        subprocess.Popen(["git", "push", "origin", "main"])
 
 def reset_classification():
     st.session_state.predicted = False
