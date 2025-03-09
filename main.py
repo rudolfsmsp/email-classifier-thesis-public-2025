@@ -24,5 +24,5 @@ def launch_streamlit():
     subprocess.run(["streamlit", "run", "interface.py", "--server.headless", "true", "--server.port", "8502"])
 
 if __name__ == "__main__":
-    setup_environment()  # Run preprocessing in the background
-    launch_streamlit()  # Start Streamlit as the main process
+    setup_environment()
+    launch_streamlit()
