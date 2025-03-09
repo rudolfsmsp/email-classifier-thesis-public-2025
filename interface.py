@@ -39,10 +39,9 @@ def retrain_model():
     st.session_state.retraining = True  # Start loading
     with st.spinner("Retraining model..."):
         try:
-            subprocess.run(["python", "create_master_email_dataset.py"], check=True)
-            subprocess.run(["python", "create_master_url_dataset.py"], check=True)
-            subprocess.run(["python", "train_email_classifier.py"], check=True)
-            st.success("Model retrained successfully.")
+            subprocess.run(["python3", "create_master_email_dataset.py"], check=True)
+            subprocess.run(["python3", "create_master_url_dataset.py"], check=True)
+            subprocess.run(["python3", "train_email_classifier.py"], check=True)
         except Exception as e:
             st.error(f"Retraining failed: {e}")
     st.session_state.retraining = False
