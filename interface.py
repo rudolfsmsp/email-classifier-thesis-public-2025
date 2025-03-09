@@ -41,15 +41,20 @@ def reset_classification():
 
 def retrain_model():
     st.session_state.retraining = True  # Start loading
+    st.info("Starting model retraining...")
+
     with st.spinner("Retraining model..."):
         try:
+            start_time = time.time()
             subprocess.run(["python3", "create_master_email_dataset.py"], check=True)
             subprocess.run(["python3", "create_master_url_dataset.py"], check=True)
             subprocess.run(["python3", "train_email_classifier.py"], check=True)
+            end_time = time.time()
+            st.success(f"Model retrained successfully in {end_time - start_time:.2f} seconds.")
         except Exception as e:
             st.error(f"Retraining failed: {e}")
+
     st.session_state.retraining = False
-    st.rerun()
 
 def main():
     st.set_page_config(page_title="Email Classifier",layout="centered")
