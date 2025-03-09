@@ -12,14 +12,8 @@ def setup_environment():
     ]
     for script in scripts:
         if os.path.exists(script):
-            print(f"[INFO] Running {script}...")
-            result = subprocess.run(["python", script], capture_output=True, text=True)
-            if result.returncode != 0:
-                print(f"[ERROR] {script} failed with error:\n{result.stderr}")
-            else:
-                print(f"[SUCCESS] {script} completed.")
-        else:
-            print(f"[WARNING] {script} not found, skipping.")
+            print(f"[INFO] Running {script} in background...")
+            subprocess.Popen(["python", script], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def launch_streamlit():
     print("[INFO] Launching Streamlit app...")
