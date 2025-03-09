@@ -3,13 +3,18 @@ import subprocess
 from model_loader import predict_email
 from url_utils import extract_urls, check_urls
 
+import subprocess
+
 def store_user_provided_email(email_text, label):
-    label_map={"Safe Email":0,"Spam Email":1,"Phishing Email":2}
-    normalized_label=label.title()
+    label_map = {"Safe Email": 0, "Spam Email": 1, "Phishing Email": 2}
+    normalized_label = label.title()
     if normalized_label in label_map:
-        with open("user_provided_emails.csv","a",encoding="utf-8") as f:
+        with open("user_provided_emails.csv", "a", encoding="utf-8") as f:
             f.write(f"{email_text},{normalized_label},{label_map[normalized_label]}\n")
         st.success("User-provided email stored.")
+        subprocess.run(["git", "add", "user_provided_emails.csv"])
+        subprocess.run(["git", "commit", "-m", "Auto-update user emails"])
+        subprocess.run(["git", "push", "origin", "main"])
     else:
         st.error("Invalid label. Email not stored.")
 
