@@ -46,7 +46,7 @@ def retrain_model():
         except Exception as e:
             st.error(f"Retraining failed: {e}")
     st.session_state.retraining = False
-    st.experimental_rerun()
+    st.rerun()
 
 def main():
     st.set_page_config(page_title="Email Classifier",layout="centered")
@@ -144,7 +144,7 @@ def main():
         if not st.session_state.get("retraining", False):
             if st.button("Try Again"):
                 reset_classification()
-                st.experimental_rerun()
+                st.rerun()
 
     st.markdown("</div>",unsafe_allow_html=True)
 
