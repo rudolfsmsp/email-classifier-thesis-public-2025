@@ -159,7 +159,6 @@ def main():
                 store_user_provided_email(st.session_state.user_email,corrected_label)
                 if st.session_state["risk_value"]==2:
                     store_user_provided_urls(st.session_state["urls"],st.session_state["risk_value"],st.session_state["risk_source"])
-                retrain_model()
                 reset_classification()
         else:
             consent=st.checkbox("I consent to adding this email to the dataset for learning.")
@@ -167,7 +166,6 @@ def main():
                 store_user_provided_email(st.session_state.user_email,st.session_state["predicted_label"])
                 if st.session_state["risk_value"]==2:
                     store_user_provided_urls(st.session_state["urls"],st.session_state["risk_value"],st.session_state["risk_source"])
-                retrain_model()
                 reset_classification()
         if not st.session_state.get("retraining", False):
             if st.button("Try Again"):
