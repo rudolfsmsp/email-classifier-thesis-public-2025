@@ -5,16 +5,53 @@ Sarah,Safe Email,0
 ,Phishing Email,2
 Project Manager,Safe Email,0
 The Super Deals Team,Spam Email,1
-Dear User 
-
-We have detected suspicious activity on your Microsoft account.
-
-To ensure your account security  please verify your identity by clicking the secure link below:
-
-http://00272781hubpointmicrosoft.myportfolio.com
-
-If you do not complete this verification within 24 hours  your account may be temporarily suspended.
-
-Regards 
-Microsoft Security Team
 security@microsoft-alerts.com,Phishing Email,2
+Project Manager,Safe Email,0
+The Super Deals Team,Spam Email,1
+security@microsoft-alerts.com,Phishing Email,2
+The Rewards Team,Spam Email,1
+,Safe Email,0
+,Safe Email,0
+import logging
+
+# Configure logging to display debug messages
+logging.basicConfig(level=logging.DEBUG  format='%(levelname)s: %(message)s')
+
+def multiply(a  b):
+    """
+    Multiply two numbers and return the product.
+
+    Parameters:
+    a (int or float): The first number.
+    b (int or float): The second number.
+
+    Returns:
+    int or float: The product of a and b.
+    """
+    product = a * b
+    logging.debug("Inside multiply: %s * %s = %s"  a  b  product)
+    return product
+
+def main():
+    # Define the numbers to be multiplied
+    num1 = 2
+    num2 = 2
+    
+    # Log the start of the multiplication process
+    logging.debug("Starting multiplication process for %s and %s"  num1  num2)
+    
+    # Calculate the product using the multiply function
+    result = multiply(num1  num2)
+    
+    # Print the result in a formatted message
+    print("The result of {} x {} is: {}".format(num1  num2  result))
+    
+    # Additional demonstration: simulate a detailed calculation process
+    print("Performing step-by-step calculation:")
+    print("Step 1: Read the numbers {} and {}.".format(num1  num2))
+    print("Step 2: Multiply {} by {}.".format(num1  num2))
+    print("Step 3: Obtain the result: {}.".format(result))
+
+if __name__ == "__main__":
+    main()
+,Spam Email,1
