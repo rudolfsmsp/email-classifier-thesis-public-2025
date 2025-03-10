@@ -9,19 +9,29 @@ from url_utils import extract_urls, check_urls
 def store_user_provided_email(email_text, label):
     label_map = {"Safe Email": 0, "Spam Email": 1, "Phishing Email": 2}
     normalized_label = label.title()
+    file_path = "user_provided_emails.csv"
     if normalized_label in label_map:
-        file_path = "user_provided_emails.csv"
-        if os.path.exists(file_path):
-            df = pd.read_csv(file_path, names=["email_text", "label", "label_id"])
-            if (df["email_text"] == email_text).any():
-                st.warning("This email has already been stored.")
-                return
+        try:
+            if os.path.exists(file_path):
+                df = pd.read_csv(file_path, names=["email_text", "label", "label_id"], usecols=[0, 1, 2], on_bad_lines="skip")
+                df = df.dropna()
+                if (df["email_text"] == email_text).any():
+                    st.warning("This email has already been stored.")
+                    return
+        except Exception as e:
+            st.error(f"Error reading CSV: {e}")
+            return
         with open(file_path, "a", encoding="utf-8") as f:
             f.write(f"{email_text},{normalized_label},{label_map[normalized_label]}\n")
         st.success("User-provided email stored.")
         subprocess.run(["git", "add", "user_provided_emails.csv"])
-        subprocess.run(["git", "commit", "-m", "Auto-update user emails"], check=True)
-        subprocess.run(["git", "push", "origin", "main"], check=True)
+        result = subprocess.run(["git", "diff", "--cached", "--quiet"])  # Check if there's anything new to commit
+        if result.returncode != 0:  # Changes detected
+            subprocess.run(["git", "commit", "-m", "Auto-update user emails"], check=True)
+            subprocess.run(["git", "push", "origin", "main"], check=True)
+            st.success("Changes pushed to GitHub.")
+        else:
+            st.info("No new changes to push.")
     else:
         st.error("Invalid label. Email not stored.")
 
