@@ -13,7 +13,12 @@ def store_user_provided_email(email_text, label):
     if normalized_label in label_map:
         try:
             if os.path.exists(file_path):
-                df = pd.read_csv(file_path, names=["email_text", "label", "label_id"], usecols=[0, 1, 2], on_bad_lines="skip")
+                with open(file_path, "r", encoding="utf-8") as f:
+                    valid_rows = [row for row in csv.reader(f) if len(row) == 3]  # Only keep rows with 3 fields
+                with open(file_path, "w", encoding="utf-8", newline="") as f:
+                    writer = csv.writer(f)
+                    writer.writerows(valid_rows)
+                df = pd.read_csv(file_path, names=["email_text", "label", "label_id"])
                 df = df.dropna()
                 if (df["email_text"] == email_text).any():
                     st.warning("This email has already been stored.")
@@ -22,41 +27,16 @@ def store_user_provided_email(email_text, label):
             st.error(f"Error reading CSV: {e}")
             return
         with open(file_path, "a", encoding="utf-8") as f:
-            f.write(f"{email_text},{normalized_label},{label_map[normalized_label]}\n")
+            f.write(f"{clean_email_text},{normalized_label},{label_map[normalized_label]}\n")
         st.success("User-provided email stored.")
         subprocess.run(["git", "add", "user_provided_emails.csv"])
-        result = subprocess.run(["git", "diff", "--cached", "--quiet"])  # Check if there's anything new to commit
-        if result.returncode != 0:  # Changes detected
+        result = subprocess.run(["git", "diff", "--cached", "--quiet"])  # Check if changes exist
+        if result.returncode != 0:  # If changes exist
             subprocess.run(["git", "commit", "-m", "Auto-update user emails"], check=True)
             subprocess.run(["git", "push", "origin", "main"], check=True)
             st.success("Changes pushed to GitHub.")
         else:
             st.info("No new changes to push.")
-    else:
-        st.error("Invalid label. Email not stored.")
-
-def store_user_provided_email(email_text, label):
-    label_map = {"Safe Email": 0, "Spam Email": 1, "Phishing Email": 2}
-    normalized_label = label.title()
-    urls = extract_urls(email_text)
-    if normalized_label in label_map:
-        file_path = "user_provided_emails.csv"
-        if os.path.exists(file_path):
-            df = pd.read_csv(file_path, names=["email_text", "label", "label_id"])
-            if (df["email_text"] == email_text).any():
-                st.warning("This email has already been stored.")
-                return
-        clean_email_text = email_text
-        for url in urls:
-            clean_email_text = clean_email_text.replace(url, "[URL Removed]")
-        with open(file_path, "a", encoding="utf-8") as f:
-            f.write(f"{clean_email_text},{normalized_label},{label_map[normalized_label]}\n")
-        st.success("User-provided email stored.")
-        subprocess.run(["git", "add", "user_provided_emails.csv"])
-        subprocess.run(["git", "commit", "-m", "Auto-update user emails"], check=True)
-        subprocess.run(["git", "push", "origin", "main"], check=True)
-        if urls:
-            store_user_provided_urls(urls, label_map[normalized_label], "manual_entry")
     else:
         st.error("Invalid label. Email not stored.")
 
