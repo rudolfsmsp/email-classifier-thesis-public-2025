@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import subprocess
 import time
+import csv
 from model_loader import predict_email
 from url_utils import extract_urls, check_urls
 
