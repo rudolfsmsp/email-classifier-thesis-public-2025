@@ -50,7 +50,6 @@ def store_user_provided_email(email_text, label):
     else:
         st.error("Invalid label. Email not stored.")
 
-
 def reset_classification():
     st.session_state.predicted = False
     st.session_state.predicted_label = None
