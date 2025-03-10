@@ -7,44 +7,45 @@ import csv
 from model_loader import predict_email
 from url_utils import extract_urls, check_urls
 
+import pandas as pd
+import os
+import subprocess
+import csv
+
 def store_user_provided_email(email_text, label):
     label_map = {"Safe Email": 0, "Spam Email": 1, "Phishing Email": 2}
     normalized_label = label.title()
     file_path = "user_provided_emails.csv"
+
     if normalized_label in label_map:
         try:
+            existing_entries = set()
             if os.path.exists(file_path):
                 with open(file_path, "r", encoding="utf-8") as f:
-                    valid_rows = [row for row in csv.reader(f) if len(row) == 3]
-                with open(file_path, "w", encoding="utf-8", newline="") as f:
-                    writer = csv.writer(f)
-                    writer.writerows(valid_rows)
-                df = pd.read_csv(file_path, names=["email_text", "label", "label_id"])
-                df = df.dropna()
-                if (df["email_text"] == email_text).any():
-                    st.warning("This email has already been stored.")
-                    return
-        except Exception as e:
-            st.error(f"Error reading CSV: {e}")
-            return
-        if email_text:
+                    reader = csv.reader(f)
+                    existing_entries = {tuple(row) for row in reader if len(row) == 3}  # Only valid rows
             clean_email_text = email_text.replace(",", " ")
-        else:
-            clean_email_text = "No Content"
-        with open(file_path, "a", encoding="utf-8") as f:
-            f.write(f"{clean_email_text},{normalized_label},{label_map[normalized_label]}\n")
-        st.success("User-provided email stored.")
-        subprocess.run(["git", "add", "user_provided_emails.csv"])
-        result = subprocess.run(["git", "diff", "--cached", "--quiet"])  # Check if changes exist
-        if result.returncode != 0:  # If changes exist
-            subprocess.run(["git", "commit", "-m", "Auto-update user emails"], check=True)
-            subprocess.run(["git", "push", "origin", "main"], check=True)
-            st.success("Changes pushed to GitHub.")
-        else:
-            st.info("No new changes to push.")
-
+            new_entry = (clean_email_text, normalized_label, str(label_map[normalized_label]))
+            if new_entry in existing_entries:
+                st.warning("This email has already been stored.")
+                return
+            with open(file_path, "a", encoding="utf-8", newline="") as f:
+                writer = csv.writer(f)
+                writer.writerow(new_entry)
+            st.success("User-provided email stored.")
+            subprocess.run(["git", "add", "user_provided_emails.csv"])
+            result = subprocess.run(["git", "diff", "--cached", "--quiet"])  # Check if changes exist
+            if result.returncode != 0:  # If changes exist
+                subprocess.run(["git", "commit", "-m", "Auto-update user emails"], check=True)
+                subprocess.run(["git", "push", "origin", "main"], check=True)
+                st.success("Changes pushed to GitHub.")
+            else:
+                st.info("No new changes to push.")
+        except Exception as e:
+            st.error(f"Error processing email storage: {e}")
     else:
         st.error("Invalid label. Email not stored.")
+
 
 def store_user_provided_urls(urls, risk_value, risk_source):
             if not urls:
