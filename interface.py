@@ -15,7 +15,7 @@ def store_user_provided_email(email_text, label):
         try:
             if os.path.exists(file_path):
                 with open(file_path, "r", encoding="utf-8") as f:
-                    valid_rows = [row for row in csv.reader(f) if len(row) == 3]  # Only keep rows with 3 fields
+                    valid_rows = [row for row in csv.reader(f) if len(row) == 3]
                 with open(file_path, "w", encoding="utf-8", newline="") as f:
                     writer = csv.writer(f)
                     writer.writerows(valid_rows)
@@ -27,6 +27,10 @@ def store_user_provided_email(email_text, label):
         except Exception as e:
             st.error(f"Error reading CSV: {e}")
             return
+        if email_text:
+            clean_email_text = email_text.replace(",", " ")
+        else:
+            clean_email_text = "No Content"
         with open(file_path, "a", encoding="utf-8") as f:
             f.write(f"{clean_email_text},{normalized_label},{label_map[normalized_label]}\n")
         st.success("User-provided email stored.")
@@ -38,6 +42,7 @@ def store_user_provided_email(email_text, label):
             st.success("Changes pushed to GitHub.")
         else:
             st.info("No new changes to push.")
+
     else:
         st.error("Invalid label. Email not stored.")
 
