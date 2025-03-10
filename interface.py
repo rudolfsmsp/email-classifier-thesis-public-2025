@@ -26,31 +26,31 @@ def store_user_provided_email(email_text, label):
         st.error("Invalid label. Email not stored.")
 
 
-def store_user_provided_urls(urls, risk_value, risk_source):
-    if not urls:
-        return
-    existing_urls = set()
-
-    try:
-        with open("user_provided_urls.csv", "r", encoding="utf-8") as f:
-            existing_urls = {line.strip().split(",")[0] for line in f if line.strip()}
-    except FileNotFoundError:
-        pass
-
-    new_entries = []
-    with open("user_provided_urls.csv", "a", encoding="utf-8") as f:
+def store_user_provided_email(email_text, label):
+    label_map = {"Safe Email": 0, "Spam Email": 1, "Phishing Email": 2}
+    normalized_label = label.title()
+    urls = extract_urls(email_text)
+    if normalized_label in label_map:
+        file_path = "user_provided_emails.csv"
+        if os.path.exists(file_path):
+            df = pd.read_csv(file_path, names=["email_text", "label", "label_id"])
+            if (df["email_text"] == email_text).any():
+                st.warning("This email has already been stored.")
+                return
+        clean_email_text = email_text
         for url in urls:
-            if url not in existing_urls:
-                entry = f"{url},{risk_value},{risk_source}\n"
-                f.write(entry)
-                new_entries.append(entry)
+            clean_email_text = clean_email_text.replace(url, "[URL Removed]")
+        with open(file_path, "a", encoding="utf-8") as f:
+            f.write(f"{clean_email_text},{normalized_label},{label_map[normalized_label]}\n")
+        st.success("User-provided email stored.")
+        subprocess.run(["git", "add", "user_provided_emails.csv"])
+        subprocess.run(["git", "commit", "-m", "Auto-update user emails"], check=True)
+        subprocess.run(["git", "push", "origin", "main"], check=True)
+        if urls:
+            store_user_provided_urls(urls, label_map[normalized_label], "manual_entry")
+    else:
+        st.error("Invalid label. Email not stored.")
 
-    if new_entries:
-        st.success("User-provided URLs stored.")
-
-        subprocess.Popen(["git", "add", "user_provided_urls.csv"])
-        subprocess.Popen(["git", "commit", "-m", "Auto-update user-provided URLs"])
-        subprocess.Popen(["git", "push", "origin", "main"])
 
 def reset_classification():
     st.session_state.predicted = False
