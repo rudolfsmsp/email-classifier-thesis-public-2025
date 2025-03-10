@@ -46,6 +46,34 @@ def store_user_provided_email(email_text, label):
     else:
         st.error("Invalid label. Email not stored.")
 
+def store_user_provided_urls(urls, risk_value, risk_source):
+            if not urls:
+                return
+            file_path = "user_provided_urls.csv"
+            existing_urls = set()
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    existing_urls = {line.strip().split(",")[0] for line in f if line.strip()}
+            except FileNotFoundError:
+                pass
+            new_entries = []
+            with open(file_path, "a", encoding="utf-8") as f:
+                for url in urls:
+                    if url not in existing_urls:
+                        entry = f"{url},{risk_value},{risk_source}\n"
+                        f.write(entry)
+                        new_entries.append(entry)
+            if new_entries:
+                st.success("User-provided URLs stored.")
+                subprocess.run(["git", "add", "user_provided_urls.csv"])
+                result = subprocess.run(["git", "diff", "--cached", "--quiet"])  # Check if there are changes
+                if result.returncode != 0:  # If changes exist
+                    subprocess.run(["git", "commit", "-m", "Auto-update user-provided URLs"], check=True)
+                    subprocess.run(["git", "push", "origin", "main"], check=True)
+                    st.success("URL changes pushed to GitHub.")
+                else:
+                    st.info("No new URL changes to push.")
+
 def reset_classification():
     st.session_state.predicted = False
     st.session_state.predicted_label = None
