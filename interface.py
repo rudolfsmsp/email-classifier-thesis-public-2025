@@ -25,7 +25,6 @@ def store_user_provided_email(email_text, label):
     else:
         st.error("Invalid label. Email not stored.")
 
-
 def store_user_provided_email(email_text, label):
     label_map = {"Safe Email": 0, "Spam Email": 1, "Phishing Email": 2}
     normalized_label = label.title()
