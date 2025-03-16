@@ -2,7 +2,7 @@ import subprocess
 import os
 
 def setup_environment():
-    print("[INFO] Running dataset preparation...")
+    print("[INFO] running dataset preparation...")
     scripts = [
         "create_unified_email_dataset.py",
         "create_master_email_dataset.py",
@@ -10,7 +10,6 @@ def setup_environment():
         "create_master_url_dataset.py",
         "train_email_classifier.py"
     ]
-
     for script in scripts:
         if os.path.exists(script):
             print(f"[INFO] running {script} in the background...")
@@ -18,9 +17,8 @@ def setup_environment():
         else:
             print(f"[WARNING] {script} not found, skipping.")
 
-
 def launch_streamlit():
-    print("[INFO] Launching Streamlit app...")
+    print("[INFO] launching Streamlit app...")
     subprocess.run(["streamlit", "run", "interface.py", "--server.headless", "true", "--server.port", "8502"])
 
 if __name__ == "__main__":

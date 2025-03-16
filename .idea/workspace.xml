@@ -6,6 +6,16 @@
   <component name="ChangeListManager">
     <list default="true" id="907deb6d-a564-4229-8a63-d0891ba2896f" name="Changes" comment="Updated interface.py">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bow_vectorizer.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/bow_vectorizer.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/interface.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/master_email_dataset.csv" beforeDir="false" afterPath="$PROJECT_DIR$/master_email_dataset.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/naive_bayes_bow_model.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/naive_bayes_bow_model.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/naive_bayes_tfidf_model.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/naive_bayes_tfidf_model.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tfidf_vectorizer.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/tfidf_vectorizer.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_email_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_email_classifier.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/unified_url_dataset.csv" beforeDir="false" afterPath="$PROJECT_DIR$/unified_url_dataset.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/url_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/url_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -444,7 +454,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741568809001</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="Updated interface.py">
+      <option name="closed" value="true" />
+      <created>1741621748331</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1741621748331</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="UnknownFeatures">

@@ -16,16 +16,15 @@ VECTORIZER_BOW = "bow_vectorizer.pkl"
 
 SPAM_KEYWORDS = set([
     "ecommerce", "buy", "buy direct", "buy today", "clearance", "as seen on",
-    "order", "order status", "sample", "wants credit card", "claim now", "act now",
-    "this won’t last", "expires soon", "limited time", "exclusive deal", "urgent",
+    "sample", "wants credit card", "claim now",
+    "this won’t last", "expires soon", "limited time", "exclusive deal",
     "100%", "50% off", "all-new", "best price", "all-natural", "100% satisfaction",
-    "lifetime", "urgency", "do it today!", "act fast!", "apply now", "apply online",
+    "lifetime", "do it today!", "act fast!", "apply now", "apply online",
     "access fast", "call now", "call free", "instant access", "don’t hesitate",
     "for you", "instant", "now", "now only", "order expires", "please read",
     "take action now", "while supplies last", "one time only", "click this link",
-    "click to remove", "final call", "hurry up", "immediately", "top urgent",
+    "click to remove", "final call", "hurry up", "money back", "dollars", "cash",
     "last chance", "claim your prize", "new customers only",
-    "important information regarding", "financial", "money back", "dollars", "cash",
     "profit", "$$$", "big bucks", "fast cash", "extra cash", "get paid", "credit",
     "debit", "billion", "cash bonus", "best price", "bonus", "double your income",
     "free investment", "lowest interest rate", "no strings attached", "risk-free",
@@ -34,30 +33,48 @@ SPAM_KEYWORDS = set([
     "no hidden charges", "no hidden costs", "us dollars", "allowance", "action required",
     "why pay more?", "you are a winner", "you are selected", "very cheap",
     "avoid bankruptcy", "financial independence", "online biz opportunity", "risk-free",
-    "pre-approved", "winner", "offshore", "legal", "loans", "luxury", "accept credit cards",
+    "pre-approved", "winner", "offshore", "luxury", "accept credit cards",
     "beneficiary", "claims", "claims to be legal", "shady or unethical behavior",
-    "dear friend", "direct email", "bulk email", "mass email", "confidentiality",
+    "dear friend", "direct email", "bulk email", "mass email", "legal", "loans",
     "cancel any time", "congratulations", "no catch", "no costs", "no gimmicks",
     "human growth hormone", "not spam", "no obligation", "babes", "cutie", "kinky", "mature",
     "viagra", "valium", "vicodin", "weight loss", "xanax", "lose weight fast",
     "stop aging", "cure baldness", "miracle", "this is not a scam", "this is not fraud",
     "not junk", "no questions asked", "internet marketing", "multi-level marketing",
     "direct marketing", "click below to access", "meet singles", "social security number",
-    "search engine", "internet traffic", "password", "requires initial investment",
-    "your income", "get out of debt", "marketing", "click", "click below",
-    "click here to remove", "re:", "ad", "auto email removal", "email marketing",
+    "search engine", "internet traffic", "requires initial investment",
+    "your income", "get out of debt", "marketing","click here to remove",
+    "re:", "ad", "auto email removal", "email marketing",
     "email harvest", "direct marketing", "internet marketing", "internet market",
     "increase sales", "increase traffic", "marketing solutions", "mass email",
     "bulk email", "direct email", "more internet traffic", "notspam", "performance",
     "we hate spam", "will not believe your eyes", "undisclosed recipient"
 ])
 
-# returns the count of spam keywords found in the text
+PHISHING_KEYWORDS = set([
+    "access", "accounts", "auth", "security", "portal", "user", "company", "admin",
+    "credential", "identity", "login", "password", "privilege", "token", "validation",
+    "assurance", "availability", "confidentiality", "integrity", "privacy", "safety",
+    "trust", "verification", "check", "key", "lock", "biometrics", "authorize",
+    "authentication", "session", "verification", "profile", "service", "support",
+    "notify", "email", "account", "update", "secure", "notification", "transaction",
+    "validate", "confirmation", "manager", "assistant", "dashboard", "information",
+    "communication", "finance", "maintenance", "service", "customer", "invoice",
+    "billing", "transaction", "subscription", "order", "shipment", "purchase", "support",
+    "notification", "alert", "confirmation", "update", "information", "communication",
+    "finance", "billinginfo", "receipt", "accountinfo", "profile", "payment",
+    "invoiceinfo", "orderinfo", "urgent", "order status", "act now", "important information regarding"
+    "urgency", "immediately", "top urgent", "financial", "confidentiality","click", "click below"
+])
+
 def count_spam_keywords(text):
     text = text.lower()
     return sum(1 for word in SPAM_KEYWORDS if word in text)
 
-# loads user provided email dataset from file if available
+def count_phishing_keywords(text):
+    text = text.lower()
+    return sum(1 for word in PHISHING_KEYWORDS if word in text)
+
 def load_user_provided_data():
     if os.path.exists(USER_PROVIDED_PATH):
         print("[INFO] merging user-provided email dataset...")
@@ -74,8 +91,6 @@ def load_user_provided_data():
             return pd.DataFrame(columns=["email_text", "email_type", "email_label"])
     return pd.DataFrame(columns=["email_text", "email_type", "email_label"])
 
-# loads master dataset from internal email database first, merges user-provided data,
-# extracts urls and spam keywords, and adjusts labels based on url risk; keywords are counted but no boost is applied
 def load_data():
     if not os.path.exists(DATASET_PATH):
         print("[ERROR] master_email_dataset.csv not found.")
@@ -99,10 +114,11 @@ def load_data():
     df["url_risk"] = df["urls"].apply(lambda urls: check_urls(urls) if urls else 0)
     df.loc[df["url_risk"] == 2, "email_label"] = 2
     df["spam_keyword_count"] = df["email_text"].apply(count_spam_keywords)
+    df["phishing_keyword_count"] = df["email_text"].apply(count_phishing_keywords)
     df["spam_boost"] = 1
+
     return df
 
-# trains email classifier models using tfidf and bag of words approaches and saves them
 def train_classifier():
     print("[INFO] starting email classifier training...")
     df = load_data()
@@ -118,18 +134,30 @@ def train_classifier():
         })
         df = pd.concat([df, missing_data], ignore_index=True)
     class_weights = compute_class_weight("balanced", classes=np.array([0, 1, 2]), y=df["email_label"])
-    cw_dict = {lbl: wt * (2 if lbl == 2 else 1) for lbl, wt in zip([0, 1, 2], class_weights)}
+    cw_dict = {
+        0: class_weights[0],  # safe
+        1: class_weights[1],  # spam
+        2: class_weights[2] * 25  # phishing
+    }
     print("[INFO] training tf-idf model...")
     tfidf_vectorizer = TfidfVectorizer()
     X_train_tfidf = tfidf_vectorizer.fit_transform(df["email_text"])
     nb_tfidf = MultinomialNB()
-    nb_tfidf.fit(X_train_tfidf, df["email_label"], sample_weight=[cw_dict[label] for label in df["email_label"]])
+    nb_tfidf.fit(
+        X_train_tfidf,
+        df["email_label"],
+        sample_weight=[cw_dict[label] for label in df["email_label"]]
+    )
     print("[SUCCESS] finished training tf-idf model.")
     print("[INFO] training bag of words model...")
     bow_vectorizer = CountVectorizer()
     X_train_bow = bow_vectorizer.fit_transform(df["email_text"])
     nb_bow = MultinomialNB()
-    nb_bow.fit(X_train_bow, df["email_label"], sample_weight=[cw_dict[label] for label in df["email_label"]])
+    nb_bow.fit(
+        X_train_bow,
+        df["email_label"],
+        sample_weight=[cw_dict[label] for label in df["email_label"]]
+    )
     print("[SUCCESS] finished training bag of words model.")
     joblib.dump(nb_tfidf, MODEL_TFIDF)
     joblib.dump(tfidf_vectorizer, VECTORIZER_TFIDF)
