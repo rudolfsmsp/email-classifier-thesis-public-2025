@@ -59,7 +59,7 @@ def create_master_url_dataset():
         print(f"[ERROR] {dataset_path} not found. Cannot create master URL dataset.")
         return
     try:
-        df = pd.read_csv(dataset_path, dtype=str, low_memory=False)
+        df = pd.read_csv(dataset_path, dtype=str, error_bad_lines=False, warn_bad_lines=True, low_memory=False)
         df.columns = [col.lower() for col in df.columns]
         df = df.drop_duplicates(subset=["url"])
         label_map = {
@@ -71,8 +71,9 @@ def create_master_url_dataset():
         }
         df["label"] = df["label"].astype(str).str.strip().str.lower().map(lambda x: label_map.get(x, x))
         df.dropna(subset=["url", "label"], inplace=True)
-        df["url"] = df["url"].astype(str).str.lower().str.rstrip("/")  # Remove trailing slashes
+        df["url"] = df["url"].astype(str).str.lower()
         df["label"] = df["label"].astype(str)
+        df = df[["url", "label"]]
         user_df = load_user_provided_data()
         df = pd.concat([df, user_df], ignore_index=True).drop_duplicates(subset=["url"])
         df.to_csv(DATASET_PATH, index=False)
