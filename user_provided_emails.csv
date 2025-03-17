@@ -1024,3 +1024,13 @@ Please find the attached invoice for this month's services. Let me know if you h
 Best regards   
 John Doe
 ",Safe Email,0
+"Dear User 
+
+Your account has been flagged for suspicious activity. Please verify your identity by logging in at:
+https://bank-secure-login.com
+
+Failure to comply will result in account suspension.
+
+Sincerely   
+Bank Security Team
+",Phishing Email,2
