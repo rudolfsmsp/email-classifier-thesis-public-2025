@@ -86,7 +86,7 @@ def save_user_email(email_text,label):
     except Exception as e:
         print(f"[ERROR] Failed to save user-provided email: {e}")
 
-    time.sleep(5)  # Ensure emails are updated before processing URLs
+    time.sleep(15)  # Ensure emails are updated before processing URLs
     sync_user_urls_with_emails()
 
 # syncs user URLs with the classification from user emails
