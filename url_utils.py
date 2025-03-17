@@ -26,15 +26,18 @@ def normalize_url(url):
     return url.rstrip("/")
 
 # loads the master url dataset and updates the global url_mapping dictionary with normalized keys
-def load_master_url_dataset():
+def load_master_url_dataset(force_reload=False):
     global url_mapping
-    print("[INFO] starting master url dataset creation...")
+    if url_mapping and not force_reload:
+        print("[INFO] master URL dataset already loaded. Skipping reload.")
+        return
+    print("[INFO] loading master URL dataset...")
     try:
         url_dataset = pd.read_csv(MASTER_DATASET_PATH, dtype=str, low_memory=False)
         user_dataset = pd.read_csv(USER_PROVIDED_PATH, dtype=str, low_memory=False) if os.path.exists(USER_PROVIDED_PATH) else pd.DataFrame(columns=["url", "label"])
         combined_dataset = pd.concat([url_dataset, user_dataset], ignore_index=True).drop_duplicates(subset=["url"])
         url_mapping = {normalize_url(row["url"]): int(float(row["label"])) for _, row in combined_dataset.iterrows()}
-        print(f"[SUCCESS] loaded {len(url_mapping)} urls from combined master dataset.")
+        print(f"[SUCCESS] loaded {len(url_mapping)} URLs from combined master dataset.")
     except Exception as e:
         print(f"[ERROR] failed to load master dataset ({e}).")
         url_mapping = {}
