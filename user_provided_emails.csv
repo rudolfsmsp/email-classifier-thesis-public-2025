@@ -934,3 +934,24 @@ To restore your account  you must verify your identity immediately:
 
 Thank you for choosing PayPal.
 PayPal Security Team",Phishing Email,2
+"Alright  let's get a bit more creative with a phishing email example  trying to tap into a few different psychological triggers:
+
+Subject: You've Been Selected for the Exclusive ""Project Nova"" Beta Test!
+
+Dear [Your Email Address - a red flag] 
+
+Congratulations! You've been randomly selected to participate in the highly anticipated ""Project Nova"" beta test. This exclusive opportunity grants you early access to cutting-edge technology before its official release.
+
+Project Nova is a revolutionary [vague  enticing description  e.g.  ""AI-powered productivity suite"" or ""next-gen immersive experience""]. We've chosen a select group of users to provide valuable feedback and shape the future of this groundbreaking innovation.
+
+To claim your spot and download the beta software  please follow this link:
+
+[Suspicious Link - DO NOT CLICK]
+
+Due to the limited availability of beta slots  this offer expires in 48 hours.
+
+We're excited to have you on board!
+
+Sincerely 
+
+The Project Nova Team",Phishing Email,2
