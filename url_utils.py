@@ -92,7 +92,7 @@ def check_urls(urls):
     if not urls:
         print("[INFO] no urls found. skipping check.")
         return (0, "none")
-    if not url_mapping:
+    if not url_mapping:  # Load only if not already loaded
         load_master_url_dataset()
     phishing_urls = load_phishing_urls()
     for url in urls:
@@ -112,7 +112,7 @@ def check_urls(urls):
                 f.write(f"{url},2\n")
             print(f"[INFO] added {url} to internal phishing database.")
             return (2, "external")
-    print("[INFO] no threats detected in provided urls.")
+    print("[INFO] no threats detected in provided URLs.")
     return (0, "none")
 
 if __name__ == "__main__":
