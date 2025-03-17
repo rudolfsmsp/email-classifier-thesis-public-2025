@@ -34,13 +34,13 @@ def load_master_url_dataset(force_reload=False):
     print("[INFO] loading master URL dataset...")
     try:
         url_dataset = pd.read_csv(MASTER_DATASET_PATH, dtype=str, low_memory=False)
-        user_dataset = pd.read_csv(USER_PROVIDED_PATH, dtype=str, low_memory=False) if os.path.exists(USER_PROVIDED_PATH) else pd.DataFrame(columns=["url", "label"])
+        user_dataset = load_user_provided_data()
         combined_dataset = pd.concat([url_dataset, user_dataset], ignore_index=True).drop_duplicates(subset=["url"])
         url_mapping = {}
         for _, row in combined_dataset.iterrows():
             try:
                 normalized_url = normalize_url(row["url"])
-                label = int(float(str(row["label"]).strip()))
+                label = str(row["label"]).strip()  # Ensuring consistent label handling
                 url_mapping[normalized_url] = label
             except (ValueError, AttributeError) as e:
                 print(f"[WARNING] skipped invalid row: url={row['url']}, label={row['label']} ({e})")
@@ -48,6 +48,21 @@ def load_master_url_dataset(force_reload=False):
     except Exception as e:
         print(f"[ERROR] failed to load master dataset ({e}).")
         url_mapping = {}
+
+# loads user-provided URLs if available
+def load_user_provided_data():
+    if os.path.exists(USER_PROVIDED_PATH):
+        print("[INFO] merging user-provided URL dataset...")
+        try:
+            user_df = pd.read_csv(USER_PROVIDED_PATH, dtype=str, names=["url", "label"])
+            user_df["url"] = user_df["url"].fillna("").astype(str).str.lower()
+            user_df["label"] = user_df["label"].fillna("").astype(str)
+            print(f"[SUCCESS] loaded {len(user_df)} user-provided URLs.")
+            return user_df
+        except Exception as e:
+            print(f"[ERROR] failed to load user-provided URLs: {e}")
+            return pd.DataFrame(columns=["url", "label"])
+    return pd.DataFrame(columns=["url", "label"])
 
 # downloads the latest phishing database files and saves them to the cache file
 def fetch_phishing_database():
@@ -118,11 +133,13 @@ def check_urls(urls):
         except Exception:
             domain = normalized
         if domain in phishing_urls:
+            if domain in user_urls:
+                print(f"[INFO] user-submitted URL detected in phishing database: {domain}. Overriding classification to safe.")
+                return (0, "user_submitted")
             print(f"[INFO] detected phishing domain from external database: {domain}")
-            if domain not in user_urls:
-                with open(USER_PROVIDED_PATH, "a") as f:
-                    f.write(f"{domain},2\n")
-                print(f"[INFO] added {domain} to internal phishing database.")
+            with open(USER_PROVIDED_PATH, "a") as f:
+                f.write(f"{domain},2\n")
+            print(f"[INFO] added {domain} to internal phishing database.")
             return (2, "external")
     print("[INFO] no threats detected in provided URLs.")
     return (0, "none")
