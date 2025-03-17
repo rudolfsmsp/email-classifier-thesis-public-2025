@@ -1,5 +1,5 @@
 nohup: ignoring input
-2025-03-16 23:48:02.010 
+2025-03-17 00:22:36.735 
 Warning: the config option 'server.enableCORS=false' is not compatible with 'server.enableXsrfProtection=true'.
 As a result, 'server.enableCORS' is being overridden to 'true'.
 
