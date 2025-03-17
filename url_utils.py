@@ -36,14 +36,7 @@ def load_master_url_dataset(force_reload=False):
         url_dataset = pd.read_csv(MASTER_DATASET_PATH, dtype=str, low_memory=False)
         user_dataset = load_user_provided_data()
         combined_dataset = pd.concat([url_dataset, user_dataset], ignore_index=True).drop_duplicates(subset=["url"])
-        url_mapping = {}
-        for _, row in combined_dataset.iterrows():
-            try:
-                normalized_url = normalize_url(row["url"])
-                label = str(row["label"]).strip()  # Ensuring consistent label handling
-                url_mapping[normalized_url] = label
-            except (ValueError, AttributeError) as e:
-                print(f"[WARNING] skipped invalid row: url={row['url']}, label={row['label']} ({e})")
+        url_mapping = {normalize_url(row["url"]): str(row["label"]).strip() for _, row in combined_dataset.iterrows() if pd.notna(row["url"])}
         print(f"[SUCCESS] loaded {len(url_mapping)} URLs from combined master dataset.")
     except Exception as e:
         print(f"[ERROR] failed to load master dataset ({e}).")
@@ -108,6 +101,15 @@ def extract_urls(text):
             pass
     return urls + list(extracted_domains)
 
+# writes user-submitted URLs safely to the user_provided_urls.csv file
+def save_user_url(url, label):
+    url = normalize_url(url)
+    existing_data = load_user_provided_data()
+    if url not in existing_data["url"].tolist():
+        with open(USER_PROVIDED_PATH, "a") as f:
+            f.write(f"{url},{label}\n")
+        print(f"[INFO] added user-submitted URL: {url} | label: {label}")
+
 # checks if any extracted url or domain (normalized) is in the master dataset or in the phishing database and returns a risk tuple
 def check_urls(urls):
     print("[INFO] checking urls against databases...")
@@ -118,29 +120,38 @@ def check_urls(urls):
         load_master_url_dataset()
     phishing_urls = load_phishing_urls()
     user_urls = load_user_provided_data()["url"].tolist()  # Load user-submitted URLs
+
     for url in urls:
         normalized = normalize_url(url)
+        
+        # If the URL was submitted by a user, store it safely and skip phishing checks
         if normalized in user_urls:
-            print(f"[INFO] user-provided URL detected: {normalized}. Skipping phishing check.")
+            print(f"[INFO] user-provided URL detected: {normalized}. Marking as safe.")
             return (0, "user_submitted")
+        
+        # If the URL is in our internal dataset
         if normalized in url_mapping:
             risk = url_mapping[normalized]
             print(f"[INFO] found url in internal database: {normalized} | risk: {risk}")
             return (2, "internal") if risk == "2" else (0, "internal")
+        
         try:
             domain = url.split("/")[2]
             domain = normalize_url(domain)
         except Exception:
             domain = normalized
+
+        # check if the URL is in the external phishing database
         if domain in phishing_urls:
             if domain in user_urls:
                 print(f"[INFO] user-submitted URL detected in phishing database: {domain}. Overriding classification to safe.")
                 return (0, "user_submitted")
             print(f"[INFO] detected phishing domain from external database: {domain}")
-            with open(USER_PROVIDED_PATH, "a") as f:
-                f.write(f"{domain},2\n")
-            print(f"[INFO] added {domain} to internal phishing database.")
+            save_user_url(domain, "2")  # Store phishing URL properly
             return (2, "external")
+
+        # if no threats were found, store the safe URL and continue
+        save_user_url(normalized, "0")  # Store safe URL properly
     print("[INFO] no threats detected in provided URLs.")
     return (0, "none")
 
