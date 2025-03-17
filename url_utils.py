@@ -74,6 +74,50 @@ def save_user_url(url, label):
     except Exception as e:
         print(f"[ERROR] failed to save user-submitted URL: {e}")
 
+# downloads the latest phishing database files and saves them to the cache file
+def fetch_phishing_database():
+    print("[INFO] fetching latest phishing database...")
+    phishing_data = set()
+    for source_url in PHISHING_URLS:
+        try:
+            print(f"[INFO] fetching data from {source_url}...")
+            response = requests.get(source_url, timeout=10)
+            response.raise_for_status()
+            phishing_data.update(line.strip() for line in response.text.splitlines() if line.strip() and not line.strip().startswith("#"))
+        except Exception as e:
+            print(f"[ERROR] failed to fetch phishing database from {source_url} ({e}). skipping this source.")
+    if phishing_data:
+        with open(CACHE_FILE, "w", encoding="utf-8") as f:
+            f.write("\n".join(phishing_data))
+        print(f"[SUCCESS] phishing database updated. saved at {CACHE_FILE}")
+    else:
+        print("[ERROR] all phishing database sources failed.")
+
+# loads phishing urls from the cached file and returns them as a set
+def load_phishing_urls():
+    print("[INFO] loading cached phishing urls...")
+    if not os.path.exists(CACHE_FILE):
+        fetch_phishing_database()
+    try:
+        with open(CACHE_FILE, "r", encoding="utf-8") as f:
+            phishing_urls = set(line.strip() for line in f if line.strip() and not line.strip().startswith("#"))
+        print(f"[SUCCESS] loaded {len(phishing_urls)} phishing urls from cache.")
+        return phishing_urls
+    except Exception as e:
+        print(f"[ERROR] failed to load phishing database ({e}). returning empty set.")
+        return set()
+
+# extracts urls and domains from the given text and returns a list of both
+def extract_urls(text):
+    urls = re.findall(r"https?://\S+|www\.\S+", text)
+    extracted_domains = set()
+    for url in urls:
+        try:
+            extracted_domains.add(url.split("/")[2])
+        except IndexError:
+            pass
+    return urls + list(extracted_domains)
+
 # checks if any extracted url or domain (normalized) is in the master dataset or in the phishing database and returns a risk tuple
 def check_urls(urls):
     print("[INFO] checking urls against databases...")
@@ -86,7 +130,6 @@ def check_urls(urls):
     user_urls = load_user_provided_data()["url"].tolist()  # Load user-submitted URLs
     for url in urls:
         normalized = normalize_url(url)
-        # User-submitted URLs are always stored and marked safe
         if normalized in user_urls:
             print(f"[INFO] user-provided URL detected: {normalized}. Marking as safe.")
             return (0, "user_submitted")
