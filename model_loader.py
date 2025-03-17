@@ -1,8 +1,7 @@
 import joblib
 import numpy as np
-from url_utils import extract_urls, check_urls
+from url_utils import extract_urls
 
-# predicts the classification of an email based on text content and url risk
 def predict_email(email_text):
     print("[INFO] starting email classification...")
     try:
@@ -14,7 +13,8 @@ def predict_email(email_text):
         print(f"[ERROR] failed to load model files: {e}")
         return None, None, "failed to load models."
     urls = extract_urls(email_text)
-    url_risk = check_urls(urls) if urls else 0
+    from url_utils import check_urls
+    url_risk, risk_source = check_urls(urls) if urls else (0, "none")
     email_tfidf = tfidf_vectorizer.transform([email_text])
     email_bow = bow_vectorizer.transform([email_text])
     prob_tfidf = nb_tfidf.predict_proba(email_tfidf)[0]
@@ -30,6 +30,6 @@ def predict_email(email_text):
     if url_risk == 2:
         predicted_label = "phishing email"
         final_prob[2] = 1.0
-        warning_message = "detected phishing url from database. classification adjusted."
+        warning_message = f"detected phishing url ({risk_source}). classification adjusted."
     print(f"[SUCCESS] finished email classification. predicted: {predicted_label}")
     return predicted_label, final_prob, warning_message
