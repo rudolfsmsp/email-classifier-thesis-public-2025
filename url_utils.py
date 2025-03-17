@@ -125,36 +125,34 @@ def check_urls(urls):
     print("[INFO] checking urls against databases...")
     if not urls:
         print("[INFO] no urls found. skipping check.")
-        return (0,"none")
+        return (0, "none")
     if not url_mapping:
         load_master_url_dataset()
-    phishing_urls=load_phishing_urls()
-    user_urls=load_user_provided_data()["url"].tolist() # Load user-submitted URLs
+    phishing_urls = load_phishing_urls()
+    user_urls = load_user_provided_data()["url"].tolist()  # Load user-submitted URLs
     for url in urls:
-        normalized=normalize_url(url)
+        normalized = normalize_url(url)
         if normalized in user_urls:
-            print(f"[INFO] user-provided URL detected: {normalized}. Marking as safe.")
-            return (0,"user_submitted")
+            stored_label = url_mapping.get(normalized, "0")  # Default to safe if not found
+            print(f"[INFO] user-provided URL detected: {normalized}. Using stored label: {stored_label}")
+            return (int(stored_label), "user_submitted")
         if normalized in url_mapping:
-            risk=url_mapping[normalized]
-            print(f"[INFO] found url in internal database: {normalized} | risk: {risk}")
-            return (2,"internal") if risk=="2" else (0,"internal")
+            risk = url_mapping[normalized]
+            print(f"[INFO] found URL in internal database: {normalized} | risk: {risk}")
+            return (2, "internal") if risk == "2" else (0, "internal")
         try:
-            domain=url.split("/")[2]
-            domain=normalize_url(domain)
+            domain = url.split("/")[2]
+            domain = normalize_url(domain)
         except Exception:
-            domain=normalized
+            domain = normalized
         if domain in phishing_urls:
-            if domain in user_urls:
-                print(f"[INFO] user-submitted URL detected in phishing database: {domain}. Overriding classification to safe.")
-                return (0,"user_submitted")
             print(f"[INFO] detected phishing domain from external database: {domain}")
-            save_user_url(domain,"2") # Store phishing URL properly
-            return (2,"external")
-        save_user_url(normalized,"0") # Store safe URL properly
+            save_user_url(domain, "2")  # Store as phishing
+            return (2, "external")
         print(f"[INFO] new safe URL detected and stored: {normalized}")
+        save_user_url(normalized, "0")  # Store safe URL properly
     print("[INFO] no threats detected in provided URLs.")
-    return (0,"none")
+    return (0, "none")
 
 if __name__=="__main__":
     print("[INFO] url utility module ready for use.")
