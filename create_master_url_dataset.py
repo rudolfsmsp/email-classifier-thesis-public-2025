@@ -69,7 +69,7 @@ def create_master_url_dataset():
             "0": "0",
             "1": "2"
         }
-        df["label"] = df["label"].apply(lambda x: label_map.get(str(x).strip().lower(), x))
+        df["label"] = df["label"].astype(str).str.strip().str.lower().map(lambda x: label_map.get(x, x))
         df.dropna(subset=["url", "label"], inplace=True)
         df["url"] = df["url"].astype(str).str.lower()
         df["label"] = df["label"].astype(str)
