@@ -22,7 +22,7 @@ def clean_phishing_url_data(files):
                 df.columns = [col.lower() for col in df.columns]
                 required_columns = ["url", "label"]
                 df = df[[col for col in required_columns if col in df.columns]]
-                df["url"] = df["url"].fillna("").astype(str).str.lower()
+                df["url"] = df["url"].fillna("").astype(str).str.lower().str.rstrip("/")  # Remove trailing slashes
                 df["label"] = df["label"].fillna("").astype(str)
                 dfs.append(df)
                 print(f"[SUCCESS] finished processing dataset from '{source}'. Rows -> {len(df)}")
@@ -42,7 +42,7 @@ def load_user_provided_data():
         print("[INFO] merging user-provided URL dataset...")
         try:
             user_df = pd.read_csv(USER_PROVIDED_PATH, dtype=str, names=["url", "label"])
-            user_df["url"] = user_df["url"].fillna("").astype(str).str.lower()
+            user_df["url"] = user_df["url"].fillna("").astype(str).str.lower().str.rstrip("/")  # Remove trailing slashes
             user_df["label"] = user_df["label"].fillna("").astype(str)
             print(f"[SUCCESS] loaded {len(user_df)} user-provided URLs.")
             return user_df
@@ -71,7 +71,7 @@ def create_master_url_dataset():
         }
         df["label"] = df["label"].astype(str).str.strip().str.lower().map(lambda x: label_map.get(x, x))
         df.dropna(subset=["url", "label"], inplace=True)
-        df["url"] = df["url"].astype(str).str.lower()
+        df["url"] = df["url"].astype(str).str.lower().str.rstrip("/")  # Remove trailing slashes
         df["label"] = df["label"].astype(str)
         user_df = load_user_provided_data()
         df = pd.concat([df, user_df], ignore_index=True).drop_duplicates(subset=["url"])
