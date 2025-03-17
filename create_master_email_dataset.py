@@ -35,8 +35,14 @@ def load_user_provided_data():
             user_df = pd.read_csv(
                 USER_PROVIDED_PATH,
                 dtype=str,
-                names=["email_text", "email_type", "email_label"]
+                names=["email_text", "email_type", "email_label"],
+                skiprows=1
             )
+            user_df["email_text"] = user_df["email_text"].fillna("").astype(str)
+            user_df["email_type"] = user_df["email_type"].fillna("").astype(str)
+            user_df["email_label"] = pd.to_numeric(user_df["email_label"], errors="coerce").fillna(-1).astype(int)
+            user_df = user_df[user_df["email_label"].isin([0, 1, 2])]
+            user_df.drop_duplicates(subset=["email_text"], inplace=True)
             print(f"[SUCCESS] loaded {len(user_df)} user-provided emails.")
             return user_df
         except Exception as e:
