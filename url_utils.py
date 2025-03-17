@@ -142,16 +142,17 @@ def check_urls(urls):
     if not url_mapping:
         load_master_url_dataset()
     phishing_urls = load_phishing_urls()
-    user_urls = load_user_provided_data()["url"].tolist()
+    user_data = load_user_provided_data()
+    user_urls = user_data["url"].tolist()
     for url in urls:
         normalized = normalize_url(url)
         if normalized in user_urls:
-            stored_label = url_mapping.get(normalized, "0")
-            print(f"[INFO] user-provided URL detected: {normalized}. Using stored label: {stored_label}")
+            stored_label = user_data.loc[user_data["url"] == normalized, "label"].values[0]
+            print(f"[INFO] user-provided URL detected: {normalized}. Using stored label: {stored_label}.")
             return (int(stored_label), "user_submitted")
         if normalized in url_mapping:
             risk = url_mapping[normalized]
-            print(f"[INFO] found URL in internal database: {normalized} | risk: {risk}")
+            print(f"[INFO] found url in internal database: {normalized} | risk: {risk}")
             return (2, "internal") if risk == "2" else (0, "internal")
         try:
             domain = url.split("/")[2]
@@ -160,9 +161,9 @@ def check_urls(urls):
             domain = normalized
         if domain in phishing_urls:
             print(f"[INFO] detected phishing domain from external database: {domain}")
-            save_user_url(domain, "2") 
+            save_user_url(domain, "2")
             return (2, "external")
-        print(f"[INFO] new safe URL detected and stored: {normalized}")
+        print(f"[INFO] New safe URL detected and stored: {normalized}")
         save_user_url(normalized, "0")
     print("[INFO] no threats detected in provided URLs.")
     return (0, "none")
