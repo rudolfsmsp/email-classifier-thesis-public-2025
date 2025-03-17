@@ -91,14 +91,17 @@ def save_user_email(email_text,label):
 
 # syncs user URLs with the classification from user emails
 def sync_user_urls_with_emails():
-    email_data=load_user_provided_emails()
+    email_data = load_user_provided_emails()
     if email_data.empty:
         print("[INFO] No user-provided emails found. Skipping URL sync.")
         return
-    latest_label=email_data.iloc[-1]["label"]
-    urls=extract_urls(email_data.iloc[-1]["email"])
+    latest_email = email_data.iloc[-1]
+    latest_label = latest_email["label"]
+    urls = extract_urls(latest_email["email"])
     for url in urls:
-        save_user_url(url,latest_label)
+        if url.strip():
+            print(f"[INFO] Syncing URL from email dataset: {url} | Label: {latest_label}")
+            save_user_url(url, latest_label)
 
 # writes user-submitted URLs safely to user_provided_urls.csv and auto pushes to GitHub
 def save_user_url(url,label):
@@ -140,8 +143,22 @@ def extract_urls(text):
             pass
     return urls+list(extracted_domains)
 
+# loads phishing urls from the cached file and returns them as a set
+def load_phishing_urls():
+    print("[INFO] loading cached phishing urls...")
+    if not os.path.exists(CACHE_FILE):
+        fetch_phishing_database()
+    try:
+        with open(CACHE_FILE, "r", encoding="utf-8") as f:
+            phishing_urls = set(line.strip() for line in f if line.strip() and not line.strip().startswith("#"))
+        print(f"[SUCCESS] loaded {len(phishing_urls)} phishing urls from cache.")
+        return phishing_urls
+    except Exception as e:
+        print(f"[ERROR] failed to load phishing database ({e}). returning empty set.")
+        return set()
+
 # checks if any extracted url or domain (normalized) is in the master dataset or in the phishing database and returns a risk tuple
-def check_urls(urls):
+def check_urls(urls, email_label=None):
     print("[INFO] checking urls against databases...")
     if not urls:
         print("[INFO] no urls found. skipping check.")
@@ -161,8 +178,8 @@ def check_urls(urls):
             risk=url_mapping[normalized]
             print(f"[INFO] found url in internal database: {normalized} | risk: {risk}")
             return (2,"internal") if risk=="2" else (0,"internal")
-        print(f"[INFO] New safe URL detected and stored: {normalized}")
-        save_user_url(normalized,"0")
+        print(f"[INFO] New URL detected. Assigning label from email: {email_label}")
+        save_user_url(normalized, email_label if email_label else "0")  # Assign same label as email
     print("[INFO] no threats detected in provided URLs.")
     return (0,"none")
 
