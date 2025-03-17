@@ -61,12 +61,9 @@ def load_user_provided_data():
 def save_user_url(url, label):
     url = normalize_url(url)
     existing_data = load_user_provided_data()
-
-    # Check if the URL is already stored
     if url in existing_data["url"].tolist():
         print(f"[INFO] user-submitted URL already exists: {url}. Skipping.")
         return
-
     try:
         with open(USER_PROVIDED_PATH, "a") as f:
             f.write(f"{url},{label}\n")
