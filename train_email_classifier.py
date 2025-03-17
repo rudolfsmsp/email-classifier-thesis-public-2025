@@ -97,26 +97,27 @@ def load_data():
         return None
     try:
         df = pd.read_csv(DATASET_PATH, dtype=str)
-        df = df[df["email_label"].isin(["0", "1", "2"])]
+        df["email_label"] = pd.to_numeric(df["email_label"], errors="coerce").fillna(-1).astype(int)
+        df = df[df["email_label"].isin([0, 1, 2])]
         print(f"[SUCCESS] loaded {len(df)} emails from master_email_dataset.csv")
     except Exception as e:
         print(f"[ERROR] failed to load dataset: {e}")
         return None
     user_df = load_user_provided_data()
-    df = pd.concat([df, user_df], ignore_index=True).drop_duplicates(subset=["email_text"])
+    if not user_df.empty:
+        df = pd.concat([df, user_df], ignore_index=True).drop_duplicates(subset=["email_text"])
     if "email_text" not in df.columns or "email_label" not in df.columns:
         print("[ERROR] required columns 'email_text' and 'email_label' not found.")
         return None
     df["email_text"] = df["email_text"].fillna("")
-    df["email_label"] = pd.to_numeric(df["email_label"], errors="coerce")
-    df["email_label"] = df["email_label"].fillna(0).astype(int)
+    df["email_label"] = pd.to_numeric(df["email_label"], errors="coerce").fillna(0).astype(int)
     df["urls"] = df["email_text"].apply(extract_urls)
-    df["url_risk"] = df["urls"].apply(lambda urls: check_urls(urls) if urls else 0)
-    df.loc[df["url_risk"] == 2, "email_label"] = 2
+    df["url_risk"] = df["urls"].apply(lambda urls: check_urls(urls) if urls else (0, "none"))
+    df.loc[df["url_risk"].apply(lambda x: x[0]) == 2, "email_label"] = 2
     df["spam_keyword_count"] = df["email_text"].apply(count_spam_keywords)
     df["phishing_keyword_count"] = df["email_text"].apply(count_phishing_keywords)
     df["spam_boost"] = 1
-
+    
     return df
 
 def train_classifier():
