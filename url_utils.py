@@ -129,11 +129,11 @@ def check_urls(urls):
     if not url_mapping:
         load_master_url_dataset()
     phishing_urls = load_phishing_urls()
-    user_urls = load_user_provided_data()["url"].tolist()  # Load user-submitted URLs
+    user_urls = load_user_provided_data()["url"].tolist()
     for url in urls:
         normalized = normalize_url(url)
         if normalized in user_urls:
-            stored_label = url_mapping.get(normalized, "0")  # Default to safe if not found
+            stored_label = url_mapping.get(normalized, "0")
             print(f"[INFO] user-provided URL detected: {normalized}. Using stored label: {stored_label}")
             return (int(stored_label), "user_submitted")
         if normalized in url_mapping:
@@ -147,10 +147,10 @@ def check_urls(urls):
             domain = normalized
         if domain in phishing_urls:
             print(f"[INFO] detected phishing domain from external database: {domain}")
-            save_user_url(domain, "2")  # Store as phishing
+            save_user_url(domain, "2") 
             return (2, "external")
         print(f"[INFO] new safe URL detected and stored: {normalized}")
-        save_user_url(normalized, "0")  # Store safe URL properly
+        save_user_url(normalized, "0")
     print("[INFO] no threats detected in provided URLs.")
     return (0, "none")
 
