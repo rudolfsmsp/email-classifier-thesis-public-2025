@@ -19,9 +19,8 @@ def clean_phishing_url_data(files):
             print(f"[INFO] processing dataset from '{source}'...")
             try:
                 df = pd.read_csv(file_path, dtype=str, low_memory=False)
-                df.columns = [col.lower() for col in df.columns]
-                required_columns = ["url", "label"]
-                df = df[[col for col in required_columns if col in df.columns]]
+                df.columns = [col.lower().strip() for col in df.columns]
+                df = df[["url", "label"]].dropna(subset=["url", "label"], how="any", errors="ignore")
                 dfs.append(df)
                 print(f"[SUCCESS] finished processing dataset from '{source}'. Rows -> {len(df)}")
             except Exception as e:
@@ -40,12 +39,13 @@ def load_user_provided_data():
         print("[INFO] merging user-provided URL dataset...")
         try:
             user_df = pd.read_csv(USER_PROVIDED_PATH, dtype=str, names=["url", "label"])
+            user_df.dropna(subset=["url", "label"], inplace=True)
             print(f"[SUCCESS] loaded {len(user_df)} user-provided URLs.")
             return user_df
         except Exception as e:
             print(f"[ERROR] failed to load user-provided URLs: {e}")
             return pd.DataFrame(columns=["url", "label"])
-    return pd.DataFrame(columns=["url", "label"])
+    return pd.DataFrame(columns=["url", "label"]
 
 # creates master url dataset from unified dataset and user provided data using label mapping
 def create_master_url_dataset():
@@ -59,8 +59,8 @@ def create_master_url_dataset():
     except Exception as e:
         print(f"[ERROR] finished master URL dataset creation with failure: {e}")
         return
-    df.columns = [col.lower() for col in df.columns]
-    df = df.drop_duplicates(subset=["url"])
+    df.columns = [col.lower().strip() for col in df.columns]
+    df.drop_duplicates(subset=["url"], inplace=True)
     label_map = {
         "bad": "2",
         "safe": "0",
@@ -68,7 +68,7 @@ def create_master_url_dataset():
         "0": "0",
         "1": "2"
     }
-    df["label"] = df["label"].map(lambda x: label_map.get(x.lower().strip(), x))
+    df["label"] = df["label"].map(lambda x: label_map.get(str(x).lower().strip(), x))
     df.dropna(subset=["url", "label"], inplace=True)
     user_df = load_user_provided_data()
     df = pd.concat([df, user_df], ignore_index=True).drop_duplicates(subset=["url"])
