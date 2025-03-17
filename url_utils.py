@@ -107,6 +107,10 @@ def check_urls(urls):
         if normalized in url_mapping:
             risk = url_mapping[normalized]
             print(f"[INFO] found url in internal database: {normalized} | risk: {risk}")
+            if risk == 2:
+                with open(USER_PROVIDED_PATH, "a") as f:
+                    f.write(f"{url},2\n")
+                print(f"[INFO] added {url} to internal phishing database.")
             return (2, "internal") if risk == 2 else (0, "internal")
         try:
             domain = url.split("/")[2]
