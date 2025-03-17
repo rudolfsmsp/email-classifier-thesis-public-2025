@@ -111,19 +111,19 @@ def check_urls(urls):
         if normalized in url_mapping:
             risk = url_mapping[normalized]
             print(f"[INFO] found url in internal database: {normalized} | risk: {risk}")
-            return (2, "internal") if risk == 2 else (0, "internal")
+            return (2, "internal") if risk == "2" else (0, "internal")
         try:
             domain = url.split("/")[2]
             domain = normalize_url(domain)
         except Exception:
             domain = normalized
-        if domain in phishing_urls and "https://" not in domain:
+        if domain in phishing_urls:
             print(f"[INFO] detected phishing domain from external database: {domain}")
             if domain not in user_urls:
                 with open(USER_PROVIDED_PATH, "a") as f:
-                    f.write(f"{url},2\n")
-                print(f"[INFO] added {url} to internal phishing database.")
-                return (2, "external")
+                    f.write(f"{domain},2\n")
+                print(f"[INFO] added {domain} to internal phishing database.")
+            return (2, "external")
     print("[INFO] no threats detected in provided URLs.")
     return (0, "none")
 
