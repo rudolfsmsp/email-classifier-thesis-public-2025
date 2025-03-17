@@ -74,20 +74,22 @@ def load_user_provided_emails():
     return pd.DataFrame(columns=["email","label"])
 
 # writes user-submitted emails safely to user_provided_emails.csv
-def save_user_email(email_text,label):
+def save_user_email(email_text, label, user_confirmed):
     try:
-        with open(USER_PROVIDED_EMAILS,"a") as f:
+        with open(USER_PROVIDED_EMAILS, "a") as f:
             f.write(f"{email_text},{label}\n")
         print(f"[SUCCESS] Added user-provided email: {email_text} | Label: {label}")
-        subprocess.run(["git","add",USER_PROVIDED_EMAILS])
-        subprocess.run(["git","commit","-m",f"Auto-update user emails: {email_text} | Label: {label}"])
-        subprocess.run(["git","push","origin","main"])
+        subprocess.run(["git", "add", USER_PROVIDED_EMAILS])
+        subprocess.run(["git", "commit", "-m", f"Auto-update user emails: {email_text} | Label: {label}"])
+        subprocess.run(["git", "push", "origin", "main"])
         print("[SUCCESS] User-provided emails pushed to GitHub.")
+        if user_confirmed:
+            print("[INFO] User confirmed dataset update. Syncing URLs now...")
+            sync_user_urls_with_emails()
+        else:
+            print("[INFO] Awaiting user confirmation before syncing URLs.")
     except Exception as e:
         print(f"[ERROR] Failed to save user-provided email: {e}")
-
-    time.sleep(15)  # Ensure emails are updated before processing URLs
-    sync_user_urls_with_emails()
 
 # syncs user URLs with the classification from user emails
 def sync_user_urls_with_emails():
