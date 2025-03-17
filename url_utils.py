@@ -57,17 +57,21 @@ def load_user_provided_data():
             return pd.DataFrame(columns=["url", "label"])
     return pd.DataFrame(columns=["url", "label"])
 
-# writes user-submitted URLs safely to user_provided_urls.csv
-def save_user_url(url, label):
-    url = normalize_url(url)
-    existing_data = load_user_provided_data()
+# writes user-submitted URLs safely to user_provided_urls.csv and auto pushes to GitHub
+def save_user_url(url,label):
+    url=normalize_url(url)
+    existing_data=load_user_provided_data()
     if url in existing_data["url"].tolist():
         print(f"[INFO] user-submitted URL already exists: {url}. Skipping.")
         return
     try:
-        with open(USER_PROVIDED_PATH, "a") as f:
+        with open(USER_PROVIDED_PATH,"a") as f:
             f.write(f"{url},{label}\n")
         print(f"[SUCCESS] added user-submitted URL: {url} | label: {label}")
+        subprocess.run(["git","add",USER_PROVIDED_PATH])
+        subprocess.run(["git","commit","-m",f"Auto-update user URLs: {url}"])
+        subprocess.run(["git","push","origin","main"])
+        print("[SUCCESS] user-provided URLs pushed to GitHub.")
     except Exception as e:
         print(f"[ERROR] failed to save user-submitted URL: {e}")
 
