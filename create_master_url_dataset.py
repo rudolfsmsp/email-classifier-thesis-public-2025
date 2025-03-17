@@ -19,8 +19,11 @@ def clean_phishing_url_data(files):
             print(f"[INFO] processing dataset from '{source}'...")
             try:
                 df = pd.read_csv(file_path, dtype=str, low_memory=False)
-                df.columns = [col.lower().strip() for col in df.columns]
-                df = df[["url", "label"]].dropna(subset=["url", "label"], how="any")
+                df.columns = [col.lower() for col in df.columns]
+                required_columns = ["url", "label"]
+                df = df[[col for col in required_columns if col in df.columns]]
+                df["url"] = df["url"].fillna("").astype(str).str.lower()
+                df["label"] = df["label"].fillna("").astype(str)
                 dfs.append(df)
                 print(f"[SUCCESS] finished processing dataset from '{source}'. Rows -> {len(df)}")
             except Exception as e:
@@ -39,7 +42,8 @@ def load_user_provided_data():
         print("[INFO] merging user-provided URL dataset...")
         try:
             user_df = pd.read_csv(USER_PROVIDED_PATH, dtype=str, names=["url", "label"])
-            user_df.dropna(subset=["url", "label"], inplace=True)
+            user_df["url"] = user_df["url"].fillna("").astype(str).str.lower()
+            user_df["label"] = user_df["label"].fillna("").astype(str)
             print(f"[SUCCESS] loaded {len(user_df)} user-provided URLs.")
             return user_df
         except Exception as e:
@@ -56,25 +60,26 @@ def create_master_url_dataset():
         return
     try:
         df = pd.read_csv(dataset_path, dtype=str, low_memory=False)
+        df.columns = [col.lower() for col in df.columns]
+        df = df.drop_duplicates(subset=["url"])
+        label_map = {
+            "bad": "2",
+            "safe": "0",
+            "good": "0",
+            "0": "0",
+            "1": "2"
+        }
+        df["label"] = df["label"].apply(lambda x: label_map.get(str(x).strip().lower(), x))
+        df.dropna(subset=["url", "label"], inplace=True)
+        df["url"] = df["url"].astype(str).str.lower()
+        df["label"] = df["label"].astype(str)
+        user_df = load_user_provided_data()
+        df = pd.concat([df, user_df], ignore_index=True).drop_duplicates(subset=["url"])
+        df.to_csv(DATASET_PATH, index=False)
+        print(f"[SUCCESS] finished master URL dataset creation. Saved -> {DATASET_PATH}")
+        print(f"[SUCCESS] loaded {len(df)} URLs from master_url_dataset.csv")
     except Exception as e:
         print(f"[ERROR] finished master URL dataset creation with failure: {e}")
-        return
-    df.columns = [col.lower().strip() for col in df.columns]
-    df.drop_duplicates(subset=["url"], inplace=True)
-    label_map = {
-        "bad": "2",
-        "safe": "0",
-        "good": "0",
-        "0": "0",
-        "1": "2"
-    }
-    df["label"] = df["label"].map(lambda x: label_map.get(str(x).lower().strip(), x))
-    df.dropna(subset=["url", "label"], inplace=True)
-    user_df = load_user_provided_data()
-    df = pd.concat([df, user_df], ignore_index=True).drop_duplicates(subset=["url"])
-    df.to_csv(DATASET_PATH, index=False)
-    print(f"[SUCCESS] finished master URL dataset creation. Saved -> {DATASET_PATH}")
-    print(f"[SUCCESS] loaded {len(df)} urls from master_url_dataset.csv")
 
 # executes the dataset processing pipeline
 def main():
