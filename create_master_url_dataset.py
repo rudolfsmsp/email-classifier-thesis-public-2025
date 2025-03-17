@@ -45,7 +45,7 @@ def load_user_provided_data():
         except Exception as e:
             print(f"[ERROR] failed to load user-provided URLs: {e}")
             return pd.DataFrame(columns=["url", "label"])
-    return pd.DataFrame(columns=["url", "label"]
+    return pd.DataFrame(columns=["url", "label"])
 
 # creates master url dataset from unified dataset and user provided data using label mapping
 def create_master_url_dataset():
