@@ -36,7 +36,14 @@ def load_master_url_dataset(force_reload=False):
         url_dataset = pd.read_csv(MASTER_DATASET_PATH, dtype=str, low_memory=False)
         user_dataset = pd.read_csv(USER_PROVIDED_PATH, dtype=str, low_memory=False) if os.path.exists(USER_PROVIDED_PATH) else pd.DataFrame(columns=["url", "label"])
         combined_dataset = pd.concat([url_dataset, user_dataset], ignore_index=True).drop_duplicates(subset=["url"])
-        url_mapping = {normalize_url(row["url"]): int(float(row["label"])) for _, row in combined_dataset.iterrows()}
+        url_mapping = {}
+        for _, row in combined_dataset.iterrows():
+            try:
+                normalized_url = normalize_url(row["url"])
+                label = int(float(str(row["label"]).strip()))
+                url_mapping[normalized_url] = label
+            except (ValueError, AttributeError) as e:
+                print(f"[WARNING] skipped invalid row: url={row['url']}, label={row['label']} ({e})")
         print(f"[SUCCESS] loaded {len(url_mapping)} URLs from combined master dataset.")
     except Exception as e:
         print(f"[ERROR] failed to load master dataset ({e}).")
