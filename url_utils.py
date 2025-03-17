@@ -115,10 +115,10 @@ def check_urls(urls):
             domain = normalized
         if domain in phishing_urls:
             print(f"[INFO] detected phishing domain from external database: {domain}")
-            with open(USER_PROVIDED_PATH, "a") as f:
-                f.write(f"{normalized},2\n")
+            with open("user_provided_urls.csv", "a") as f:  # Ensure correct file
+            f.write(f"{normalized},2\n")
             print(f"[INFO] added {normalized} to internal phishing database.")
-            return (2, "external")
+    return (2, "external")
     print("[INFO] no threats detected in provided URLs.")
     return (0, "none")
 
