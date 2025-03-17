@@ -59,22 +59,24 @@ def load_user_provided_data():
     return pd.DataFrame(columns=["url","label"])
 
 # writes user-submitted URLs safely to user_provided_urls.csv and auto pushes to GitHub
-def save_user_url(url,label):
-    url=normalize_url(url)
-    existing_data=load_user_provided_data()
-    if url in existing_data["url"].tolist():
-        print(f"[INFO] user-submitted URL already exists: {url}. Skipping.")
+def save_user_email(email_text, label):
+    urls = extract_urls(email_text)
+    existing_data = pd.read_csv(USER_PROVIDED_EMAILS_PATH, dtype=str) if os.path.exists(USER_PROVIDED_EMAILS_PATH) else pd.DataFrame(columns=["email", "label"])
+    if email_text in existing_data["email"].tolist():
+        print(f"[INFO] User-provided email already exists. Skipping storage.")
         return
     try:
-        with open(USER_PROVIDED_PATH,"a") as f:
-            f.write(f"{url},{label}\n")
-        print(f"[SUCCESS] added user-submitted URL: {url} | label: {label}")
-        subprocess.run(["git","add",USER_PROVIDED_PATH])
-        subprocess.run(["git","commit","-m",f"Auto-update user URLs: {url}"])
-        subprocess.run(["git","push","origin","main"])
-        print("[SUCCESS] user-provided URLs pushed to GitHub.")
+        with open(USER_PROVIDED_EMAILS_PATH, "a") as f:
+            f.write(f"{email_text},{label}\n")
+        print(f"[SUCCESS] Stored user email with label: {label}")
+        for url in urls:
+            save_user_url(url, label)
+        subprocess.run(["git", "add", USER_PROVIDED_EMAILS_PATH, USER_PROVIDED_PATH])
+        subprocess.run(["git", "commit", "-m", f"Auto-update user data: {email_text}"])
+        subprocess.run(["git", "push", "origin", "main"])
+        print("[SUCCESS] User email and URLs pushed to GitHub.")
     except Exception as e:
-        print(f"[ERROR] failed to save user-submitted URL: {e}")
+        print(f"[ERROR] Failed to save user email: {e}")
 
 # downloads the latest phishing database files and saves them to the cache file
 def fetch_phishing_database():
