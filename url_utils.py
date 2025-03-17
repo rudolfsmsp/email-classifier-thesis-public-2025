@@ -99,7 +99,7 @@ def check_urls(urls):
     if not urls:
         print("[INFO] no urls found. skipping check.")
         return (0, "none")
-    if not url_mapping:  # Load only if not already loaded
+    if not url_mapping:
         load_master_url_dataset()
     phishing_urls = load_phishing_urls()
     for url in urls:
@@ -107,10 +107,6 @@ def check_urls(urls):
         if normalized in url_mapping:
             risk = url_mapping[normalized]
             print(f"[INFO] found url in internal database: {normalized} | risk: {risk}")
-            if risk == 2:
-                with open(USER_PROVIDED_PATH, "a") as f:
-                    f.write(f"{url},2\n")
-                print(f"[INFO] added {url} to internal phishing database.")
             return (2, "internal") if risk == 2 else (0, "internal")
         try:
             domain = url.split("/")[2]
@@ -120,8 +116,8 @@ def check_urls(urls):
         if domain in phishing_urls:
             print(f"[INFO] detected phishing domain from external database: {domain}")
             with open(USER_PROVIDED_PATH, "a") as f:
-                f.write(f"{url},2\n")
-            print(f"[INFO] added {url} to internal phishing database.")
+                f.write(f"{normalized},2\n")
+            print(f"[INFO] added {normalized} to internal phishing database.")
             return (2, "external")
     print("[INFO] no threats detected in provided URLs.")
     return (0, "none")
