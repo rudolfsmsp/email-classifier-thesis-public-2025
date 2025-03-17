@@ -111,20 +111,16 @@ def load_data():
         return None
     df["email_text"] = df["email_text"].fillna("")
     df["email_label"] = pd.to_numeric(df["email_label"], errors="coerce").fillna(0).astype(int)
+    
     df["urls"] = df["email_text"].apply(extract_urls)
     df["url_risk"] = df["urls"].apply(lambda urls: check_urls(urls) if urls else (0, "none"))
     
-    phishing_urls = df["url_risk"].apply(lambda x: x[0]) == 2
-    df.loc[phishing_urls, "email_label"] = 2
-    
-    with open(USER_PROVIDED_PATH, "a") as f:
-        for url in df.loc[phishing_urls, "urls"].explode().dropna().unique():
-            f.write(f"{url},2\n")
+    df.loc[df["url_risk"].apply(lambda x: x[0]) == 2, "email_label"] = 2
     
     df["spam_keyword_count"] = df["email_text"].apply(count_spam_keywords)
     df["phishing_keyword_count"] = df["email_text"].apply(count_phishing_keywords)
     df["spam_boost"] = 1
-    
+
     return df
 
 def train_classifier():
