@@ -20,7 +20,7 @@ def clean_phishing_url_data(files):
             try:
                 df = pd.read_csv(file_path, dtype=str, low_memory=False)
                 df.columns = [col.lower().strip() for col in df.columns]
-                df = df[["url", "label"]].dropna(subset=["url", "label"], how="any", errors="ignore")
+                df = df[["url", "label"]].dropna(subset=["url", "label"], how="any")
                 dfs.append(df)
                 print(f"[SUCCESS] finished processing dataset from '{source}'. Rows -> {len(df)}")
             except Exception as e:
