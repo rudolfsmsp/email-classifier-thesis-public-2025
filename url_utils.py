@@ -102,8 +102,12 @@ def check_urls(urls):
     if not url_mapping:
         load_master_url_dataset()
     phishing_urls = load_phishing_urls()
+    user_urls = load_user_provided_data()["url"].tolist()  # Load user-submitted URLs
     for url in urls:
         normalized = normalize_url(url)
+        if normalized in user_urls:
+            print(f"[INFO] user-provided URL detected: {normalized}. Skipping phishing check.")
+            return (0, "user_submitted")
         if normalized in url_mapping:
             risk = url_mapping[normalized]
             print(f"[INFO] found url in internal database: {normalized} | risk: {risk}")
@@ -113,12 +117,13 @@ def check_urls(urls):
             domain = normalize_url(domain)
         except Exception:
             domain = normalized
-        if domain in phishing_urls:
+        if domain in phishing_urls and "https://" not in domain:
             print(f"[INFO] detected phishing domain from external database: {domain}")
-            with open("user_provided_urls.csv", "a") as f:  # Ensure correct file
-                f.write(f"{normalized},2\n")
-            print(f"[INFO] added {normalized} to internal phishing database.")
-    return (2, "external")
+            if domain not in user_urls:
+                with open(USER_PROVIDED_PATH, "a") as f:
+                    f.write(f"{url},2\n")
+                print(f"[INFO] added {url} to internal phishing database.")
+                return (2, "external")
     print("[INFO] no threats detected in provided URLs.")
     return (0, "none")
 
