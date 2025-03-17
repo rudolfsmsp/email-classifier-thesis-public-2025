@@ -59,17 +59,25 @@ def load_user_provided_data():
     return pd.DataFrame(columns=["url","label"])
 
 # writes user-submitted URLs safely to user_provided_urls.csv and auto pushes to GitHub
+import subprocess
+
 def save_user_url(url, label):
     url = normalize_url(url)
     existing_data = load_user_provided_data()
+
+    # check if URL already exists
     if url in existing_data["url"].tolist():
         existing_label = existing_data.loc[existing_data["url"] == url, "label"].values[0]
         if existing_label == "2" and label != "2":
             print(f"[WARNING] Attempted to override phishing URL as safe: {url}. Keeping phishing classification.")
             return
-        if existing_label == label:
-            print(f"[INFO] User-submitted URL already exists with same label: {existing_label}. Skipping.")
-            return
+        if existing_label != label:
+            existing_data.loc[existing_data["url"] == url, "label"] = label
+            existing_data.to_csv(USER_PROVIDED_PATH, index=False)
+            print(f"[INFO] Updated classification for {url} to {label}.")
+        else:
+            print(f"[INFO] User-submitted URL already exists with label: {existing_label}. Skipping.")
+        return
     try:
         with open(USER_PROVIDED_PATH, "a") as f:
             f.write(f"{url},{label}\n")
@@ -80,7 +88,7 @@ def save_user_url(url, label):
         print("[SUCCESS] User-provided URLs pushed to GitHub.")
     except Exception as e:
         print(f"[ERROR] Failed to save user-submitted URL: {e}")
-
+        
 # downloads the latest phishing database files and saves them to the cache file
 def fetch_phishing_database():
     print("[INFO] fetching latest phishing database...")
