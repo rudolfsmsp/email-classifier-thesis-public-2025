@@ -982,3 +982,18 @@ https://phishtank.org/,Safe Email,0
 http://brooksoriginal.com,Safe Email,0
 https://savx.app/,Phishing Email,2
 https://phishtank.org/phish_search.php,Safe Email,0
+"📩 Safe Email (Ham)
+Subject: Meeting Confirmation for Next Week
+From: Office Admin admin@company.com
+To: You
+
+Dear [Your Name] 
+
+I hope you are doing well! This is a reminder that our meeting is scheduled for Tuesday at 2:00 PM in the conference room. Please let me know if you need to reschedule.
+
+Looking forward to our discussion!
+
+Best regards 
+[Your Office Admin]
+
+",Safe Email,0
