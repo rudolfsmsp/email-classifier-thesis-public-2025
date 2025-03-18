@@ -189,26 +189,30 @@ def main():
         if st.session_state["warning_message"]:
             st.info(st.session_state["warning_message"])
         agree = st.radio("Do you agree with this classification?", ["Yes", "No"], index=0)
-
         if agree == "No":
             corrected_label = st.radio("Select the correct label:", ["Safe Email", "Spam Email", "Phishing Email"])
             consent = st.checkbox("I consent to adding this email to the dataset for learning.")
             if consent:
                 store_user_provided_email(st.session_state.user_email, corrected_label)
-                time.sleep(2)
+                time.sleep(5) 
                 if st.session_state["risk_value"] == 2:
                     store_user_provided_urls(st.session_state["urls"], st.session_state["risk_value"], st.session_state["risk_source"])
+                st.success("User-provided email and associated URLs have been stored successfully.")
                 reset_classification()
                 st.rerun()
         else:
             consent = st.checkbox("I consent to adding this email to the dataset for learning.")
             if consent:
                 store_user_provided_email(st.session_state.user_email, st.session_state["predicted_label"])
-                time.sleep(2)
+                time.sleep(2)  # Ensure file is saved before processing URLs
                 if st.session_state["risk_value"] == 2:
                     store_user_provided_urls(st.session_state["urls"], st.session_state["risk_value"], st.session_state["risk_source"])
+                st.success("User-provided email and associated URLs have been stored successfully.")
                 reset_classification()
                 st.rerun()
+        if st.button("Try Again"):
+            reset_classification()
+            st.rerun()
 
     st.markdown("</div>", unsafe_allow_html=True)
 
