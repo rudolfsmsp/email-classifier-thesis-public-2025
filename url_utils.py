@@ -117,9 +117,13 @@ def save_user_url(url,label):
             print(f"[WARNING] Attempted to override phishing URL as safe: {url}. Keeping phishing classification.")
             return
         if existing_label!=label:
+            print(f"[INFO] Updating URL {url} from label {existing_label} to {label}.")
             existing_data.loc[existing_data["url"]==url,"label"]=label
             existing_data.to_csv(USER_PROVIDED_PATH,index=False)
-            print(f"[INFO] Updated classification for {url} to {label}.")
+            subprocess.run(["git","add",USER_PROVIDED_PATH])
+            subprocess.run(["git","commit","-m",f"Auto-update user URLs: {url} | Label: {label}"])
+            subprocess.run(["git","push","origin","main"])
+            print("[SUCCESS] User-provided URLs pushed to GitHub.")
         else:
             print(f"[INFO] User-submitted URL already exists with label: {existing_label}. Skipping.")
         return
@@ -172,16 +176,24 @@ def check_urls(urls, email_label=None):
     user_urls=user_data["url"].tolist()
     for url in urls:
         normalized=normalize_url(url)
+        
+        # check if user-provided url exists
         if normalized in user_urls:
             stored_label=user_data.loc[user_data["url"]==normalized,"label"].values[0]
             print(f"[INFO] user-provided URL detected: {normalized}. Using stored label: {stored_label}.")
             return (int(stored_label),"user_submitted")
+        
+        # check if url exists in internal dataset
         if normalized in url_mapping:
             risk=url_mapping[normalized]
             print(f"[INFO] found url in internal database: {normalized} | risk: {risk}")
             return (2,"internal") if risk=="2" else (0,"internal")
-        print(f"[INFO] New URL detected. Assigning label from email: {email_label}")
-        save_user_url(normalized, email_label if email_label else "0")  # Assign same label as email
+        
+        # assign the same label as the email to the new URL
+        assigned_label=email_label if email_label else "0"
+        print(f"[INFO] New URL detected. Assigning label from email: {assigned_label}")
+        save_user_url(normalized, assigned_label)
+        
     print("[INFO] no threats detected in provided URLs.")
     return (0,"none")
 
