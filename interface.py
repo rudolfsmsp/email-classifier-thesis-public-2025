@@ -62,7 +62,6 @@ def retrain_model():
         try:
             start_time = time.time()
             subprocess.run(["python3", "create_master_email_dataset.py"], check=True)
-            # We still run create_master_url_dataset.py if you want to keep using master_url_dataset.csv for checking
             subprocess.run(["python3", "create_master_url_dataset.py"], check=True)
             subprocess.run(["python3", "train_email_classifier.py"], check=True)
             end_time = time.time()
@@ -147,14 +146,9 @@ def main():
                     predicted_label = "Phishing Email"
                     final_prob = [0.0, 0.0, 1.0]
                     warning_message = f"detected phishing url ({risk_source} database). classification adjusted."
-                elif risk_value == 0 and risk_source == "none" and urls:
-                    st.warning("URL not found in the internal database; proceed with caution.")
-                    label_map = {"safe email": "Safe Email", "spam email": "Spam Email",
-                                 "phishing email": "Phishing Email"}
-                    predicted_label = label_map.get(predicted_label.lower(), "Unknown")
                 else:
-                    label_map = {"safe email": "Safe Email", "spam email": "Spam Email",
-                                 "phishing email": "Phishing Email"}
+                    # No more "URL not found" warning
+                    label_map = {"safe email": "Safe Email", "spam email": "Spam Email", "phishing email": "Phishing Email"}
                     predicted_label = label_map.get(predicted_label.lower(), "Unknown")
 
             st.session_state.update({
