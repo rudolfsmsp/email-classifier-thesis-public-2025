@@ -14,11 +14,11 @@ echo "[INFO] Installing dependencies..."
 pip install -r requirements.txt
 
 # Check if new user data exists
-if git diff --quiet user_provided_emails.csv user_provided_urls.csv; then
+if git diff --quiet user_provided_emails.csv ; then
     echo "[INFO] No new user data to push."
 else
     echo "[INFO] New user data found. Committing changes..."
-    git add user_provided_emails.csv user_provided_urls.csv
+    git add user_provided_emails.csv
     git commit -m "Auto-update: new user-provided emails and URLs"
     git push origin main
     echo "[SUCCESS] User data pushed to GitHub."
