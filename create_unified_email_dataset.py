@@ -13,7 +13,6 @@ files = {
     "nahmias": os.path.join(data_dir, "nahmiasd_emails")
 }
 
-# loads a csv file and returns a dataframe
 def load_csv(dataset_name, file_path):
     if not os.path.exists(file_path):
         print(f"[ERROR] file not found -> {file_path}")
@@ -28,7 +27,6 @@ def load_csv(dataset_name, file_path):
     print(f"[SUCCESS] finished processing dataset from '{dataset_name}'. Rows -> {len(df)}")
     return df
 
-# loads all json files recursively from the nahmias dataset
 def load_nahmias_json(directory):
     print(f"[INFO] processing nahmias dataset from {directory}...")
     data = []
@@ -50,7 +48,6 @@ def load_nahmias_json(directory):
     print(f"[SUCCESS] finished processing nahmias dataset. Rows -> {len(df)}")
     return df
 
-# processes all datasets and creates the unified dataset
 def main():
     print("[INFO] starting unified dataset generation...")
     utwente_df = load_csv("utwente", files["utwente"])
@@ -59,6 +56,7 @@ def main():
     wiechmann_df = load_csv("wiechmann", files["wiechmann"])
     suhasmaddali_df = load_csv("suhasmaddali", files["suhasmaddali"])
     nahmias_df = load_nahmias_json(files["nahmias"])
+
     print("[INFO] combining all processed datasets...")
     unified_df = pd.concat(
         [utwente_df, sandhya_df, oibsip_spam_df, wiechmann_df, suhasmaddali_df, nahmias_df],
