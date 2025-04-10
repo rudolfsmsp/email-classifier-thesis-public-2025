@@ -3,7 +3,6 @@ import os
 
 DATA_DIR = "data"
 DATASET_PATH = "master_url_dataset.csv"
-USER_PROVIDED_PATH = "user_provided_urls.csv"
 
 FILES = {
     "tarun": os.path.join(DATA_DIR, "tarun_phishing_urls/phishing_site_urls.csv"),
@@ -22,7 +21,7 @@ def clean_phishing_url_data(files):
                 df.columns = [col.lower() for col in df.columns]
                 required_columns = ["url", "label"]
                 df = df[[col for col in required_columns if col in df.columns]]
-                df["url"] = df["url"].fillna("").astype(str).str.lower().str.rstrip("/")  # Remove trailing slashes
+                df["url"] = df["url"].fillna("").astype(str).str.lower().str.rstrip("/")
                 df["label"] = df["label"].fillna("").astype(str)
                 dfs.append(df)
                 print(f"[SUCCESS] finished processing dataset from '{source}'. Rows -> {len(df)}")
@@ -36,22 +35,6 @@ def clean_phishing_url_data(files):
     print("[SUCCESS] finished phishing URL dataset creation successfully.")
     return pd.concat(dfs, ignore_index=True)
 
-# loads user provided urls from csv file if available
-def load_user_provided_data():
-    if os.path.exists(USER_PROVIDED_PATH):
-        print("[INFO] merging user-provided URL dataset...")
-        try:
-            user_df = pd.read_csv(USER_PROVIDED_PATH, dtype=str, names=["url", "label"])
-            user_df["url"] = user_df["url"].fillna("").astype(str).str.lower().str.rstrip("/")  # Remove trailing slashes
-            user_df["label"] = user_df["label"].fillna("").astype(str)
-            print(f"[SUCCESS] loaded {len(user_df)} user-provided URLs.")
-            return user_df
-        except Exception as e:
-            print(f"[ERROR] failed to load user-provided URLs: {e}")
-            return pd.DataFrame(columns=["url", "label"])
-    return pd.DataFrame(columns=["url", "label"])
-
-# creates master url dataset from unified dataset and user provided data using label mapping
 def create_master_url_dataset():
     print("[INFO] starting master URL dataset creation...")
     dataset_path = "unified_url_dataset.csv"
@@ -62,6 +45,7 @@ def create_master_url_dataset():
         df = pd.read_csv(dataset_path, dtype=str, error_bad_lines=False, warn_bad_lines=True, low_memory=False)
         df.columns = [col.lower() for col in df.columns]
         df = df.drop_duplicates(subset=["url"])
+        # map old labels to final numeric
         label_map = {
             "bad": "2",
             "safe": "0",
@@ -74,15 +58,12 @@ def create_master_url_dataset():
         df["url"] = df["url"].astype(str).str.lower()
         df["label"] = df["label"].astype(str)
         df = df[["url", "label"]]
-        user_df = load_user_provided_data()
-        df = pd.concat([df, user_df], ignore_index=True).drop_duplicates(subset=["url"])
         df.to_csv(DATASET_PATH, index=False)
         print(f"[SUCCESS] finished master URL dataset creation. Saved -> {DATASET_PATH}")
         print(f"[SUCCESS] loaded {len(df)} URLs from master_url_dataset.csv")
     except Exception as e:
         print(f"[ERROR] finished master URL dataset creation with failure: {e}")
 
-# executes the dataset processing pipeline
 def main():
     print("[INFO] starting dataset processing pipeline...")
     phishing_urls_df = clean_phishing_url_data(FILES)
