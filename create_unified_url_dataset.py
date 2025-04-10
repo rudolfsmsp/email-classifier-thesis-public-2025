@@ -7,7 +7,6 @@ FILES = {
     "phiusiil": os.path.join(DATA_DIR, "phiusill_phishing_urls/PhiUSIIL_Phishing_URL_Dataset.csv")
 }
 
-# processes phishing url datasets from given file paths and returns a concatenated dataframe
 def clean_phishing_url_data(files):
     print("[INFO] starting phishing URL dataset creation...")
     dfs = []
@@ -26,7 +25,6 @@ def clean_phishing_url_data(files):
     print("[SUCCESS] finished phishing URL dataset creation.")
     return pd.concat(dfs, ignore_index=True) if dfs else pd.DataFrame()
 
-# executes dataset processing and saves unified url dataset
 def main():
     print("[INFO] starting unified URL dataset generation...")
     phishing_urls_df = clean_phishing_url_data({"tarun": FILES["tarun"], "phiusiil": FILES["phiusiil"]})
