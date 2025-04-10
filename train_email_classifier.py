@@ -8,7 +8,7 @@ from sklearn.utils.class_weight import compute_class_weight
 from url_utils import extract_urls, check_urls
 
 DATASET_PATH = "master_email_dataset.csv"
-USER_PROVIDED_PATH = "master_provided_emails.csv"
+USER_PROVIDED_PATH = "user_provided_emails.csv"
 MODEL_TFIDF = "naive_bayes_tfidf_model.pkl"
 MODEL_BOW = "naive_bayes_bow_model.pkl"
 VECTORIZER_TFIDF = "tfidf_vectorizer.pkl"
@@ -76,20 +76,8 @@ def count_phishing_keywords(text):
     return sum(1 for word in PHISHING_KEYWORDS if word in text)
 
 def load_user_provided_data():
-    if os.path.exists(USER_PROVIDED_PATH):
-        print("[INFO] merging user-provided email dataset...")
-        try:
-            user_df = pd.read_csv(
-                USER_PROVIDED_PATH,
-                dtype=str,
-                names=["email_text", "email_type", "email_label"]
-            )
-            print(f"[SUCCESS] loaded {len(user_df)} user-provided emails.")
-            return user_df
-        except Exception as e:
-            print(f"[ERROR] failed to load user-provided emails: {e}")
-            return pd.DataFrame(columns=["email_text", "email_type", "email_label"])
-    return pd.DataFrame(columns=["email_text", "email_type", "email_label"])
+    # Not used here; ignoring or removing is fine
+    return pd.DataFrame()
 
 def load_data():
     if not os.path.exists(DATASET_PATH):
@@ -103,20 +91,20 @@ def load_data():
     except Exception as e:
         print(f"[ERROR] failed to load dataset: {e}")
         return None
-    user_df = load_user_provided_data()
-    if not user_df.empty:
-        df = pd.concat([df, user_df], ignore_index=True).drop_duplicates(subset=["email_text"])
+
     if "email_text" not in df.columns or "email_label" not in df.columns:
         print("[ERROR] required columns 'email_text' and 'email_label' not found.")
         return None
+
     df["email_text"] = df["email_text"].fillna("")
     df["email_label"] = pd.to_numeric(df["email_label"], errors="coerce").fillna(0).astype(int)
-    
+
     df["urls"] = df["email_text"].apply(extract_urls)
     df["url_risk"] = df["urls"].apply(lambda urls: check_urls(urls) if urls else (0, "none"))
-    
+
+    # If URL risk is 2 (phishing), forcibly set label to 2
     df.loc[df["url_risk"].apply(lambda x: x[0]) == 2, "email_label"] = 2
-    
+
     df["spam_keyword_count"] = df["email_text"].apply(count_spam_keywords)
     df["phishing_keyword_count"] = df["email_text"].apply(count_phishing_keywords)
     df["spam_boost"] = 1
@@ -129,20 +117,24 @@ def train_classifier():
     if df is None or df.empty:
         print("[ERROR] dataset is empty. skipping training.")
         return
+
     unique_labels = np.unique(df["email_label"])
     missing_labels = set([0, 1, 2]) - set(unique_labels)
     if missing_labels:
+        # Ensure each label is present at least once
         missing_data = pd.DataFrame({
             "email_text": ["placeholder email"] * len(missing_labels),
             "email_label": list(missing_labels)
         })
         df = pd.concat([df, missing_data], ignore_index=True)
+
     class_weights = compute_class_weight("balanced", classes=np.array([0, 1, 2]), y=df["email_label"])
     cw_dict = {
-        0: class_weights[0],  # safe
-        1: class_weights[1],  # spam
-        2: class_weights[2] * 25  # phishing
+        0: class_weights[0],
+        1: class_weights[1],
+        2: class_weights[2] * 25  # heavier weighting on phishing
     }
+
     print("[INFO] training tf-idf model...")
     tfidf_vectorizer = TfidfVectorizer()
     X_train_tfidf = tfidf_vectorizer.fit_transform(df["email_text"])
@@ -153,6 +145,7 @@ def train_classifier():
         sample_weight=[cw_dict[label] for label in df["email_label"]]
     )
     print("[SUCCESS] finished training tf-idf model.")
+
     print("[INFO] training bag of words model...")
     bow_vectorizer = CountVectorizer()
     X_train_bow = bow_vectorizer.fit_transform(df["email_text"])
@@ -163,6 +156,7 @@ def train_classifier():
         sample_weight=[cw_dict[label] for label in df["email_label"]]
     )
     print("[SUCCESS] finished training bag of words model.")
+
     joblib.dump(nb_tfidf, MODEL_TFIDF)
     joblib.dump(tfidf_vectorizer, VECTORIZER_TFIDF)
     joblib.dump(nb_bow, MODEL_BOW)
