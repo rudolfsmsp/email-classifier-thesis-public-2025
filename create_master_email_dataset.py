@@ -5,7 +5,6 @@ import re
 DATASET_PATH = "master_email_dataset.csv"
 USER_PROVIDED_PATH = "user_provided_emails.csv"
 
-# removes html tags, punctuation, and extra spaces from text
 def clean_text(text):
     text = str(text).lower().strip()
     text = re.sub(r"<.*?>", "", text)
@@ -13,7 +12,6 @@ def clean_text(text):
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
-# merges multiple columns into one by keeping the first non-empty value
 def unify_columns(df, source_cols, final_col):
     existing = [c for c in source_cols if c in df.columns]
     if not existing:
@@ -27,16 +25,16 @@ def unify_columns(df, source_cols, final_col):
     df.drop(columns=[c for c in existing if c != final_col], inplace=True, errors="ignore")
     return df
 
-# loads user-provided email dataset from file if it exists
 def load_user_provided_data():
     if os.path.exists(USER_PROVIDED_PATH):
         print("[INFO] merging user-provided email dataset...")
         try:
-            # If user_provided_emails.csv does NOT have a header row, remove skiprows=1
+            # FIX: If your CSV has a header row, use skiprows=1:
             user_df = pd.read_csv(
                 USER_PROVIDED_PATH,
                 dtype=str,
-                names=["email_text", "email_type", "email_label"]
+                names=["email_text", "email_type", "email_label"],
+                skiprows=1  # <--- add this if your CSV has 'email_text,email_type,email_label' as the first line
             )
             user_df["email_text"] = user_df["email_text"].fillna("").astype(str)
             user_df["email_type"] = user_df["email_type"].fillna("").astype(str)
@@ -44,7 +42,6 @@ def load_user_provided_data():
                 user_df["email_label"], errors="coerce"
             ).fillna(-1).astype(int)
 
-            # keep only valid labels {0,1,2}
             user_df = user_df[user_df["email_label"].isin([0, 1, 2])]
             user_df.drop_duplicates(subset=["email_text"], inplace=True)
 
@@ -74,7 +71,6 @@ def main():
     df = unify_columns(df, ["email text", "message", "text", "v2", "email_text"], "email_text")
     df = unify_columns(df, ["spam/ham", "sentiment", "label", "v1", "email type", "email_type"], "email_type")
 
-    # drop irrelevant columns
     df.drop(
         columns=["url", "email", "phone", "message id", "subject", "date", "textid", "selected_text"],
         inplace=True,
@@ -87,14 +83,9 @@ def main():
 
     df["email_text"] = df["email_text"].fillna("").astype(str)
     df["email_type"] = df["email_type"].fillna("").astype(str)
-
-    # remove rows with email_type "unknown"
     df = df[~df["email_type"].str.lower().eq("unknown")]
-
-    # clean the text
     df["email_text"] = df["email_text"].apply(clean_text)
 
-    # map multiple labels to standard ones
     label_map = {
         "spam": "spam email",
         "smishing": "phishing email",
@@ -111,33 +102,25 @@ def main():
     df["email_type"] = df["email_type"].map(lambda x: label_map.get(x.lower().strip(), x))
     df.drop_duplicates(subset=["email_text"], inplace=True)
 
-    # final numeric label column
     df["email_label"] = df["email_type"].map({
         "safe email": 0,
         "spam email": 1,
         "phishing email": 2
     }).fillna(-1).astype(int)
 
-    # remove invalid entries
     df.dropna(subset=["email_text", "email_type"], inplace=True)
     invalid_types = {"nan", "please review your account security settings."}
     df = df[~df["email_type"].str.lower().isin(invalid_types)]
     df = df[df["email_label"] != -1]
 
-    # merge with user-provided emails
     user_df = load_user_provided_data()
     if not user_df.empty:
         user_df["email_type"] = user_df["email_type"].fillna("").astype(str)
         user_df = user_df[~user_df["email_type"].str.lower().isin(invalid_types)]
-        user_df["email_label"] = pd.to_numeric(
-            user_df["email_label"], errors="coerce"
-        ).fillna(-1).astype(int)
+        user_df["email_label"] = pd.to_numeric(user_df["email_label"], errors="coerce").fillna(-1).astype(int)
         user_df = user_df[user_df["email_label"] != -1]
-
-        # concatenate and drop duplicates
         df = pd.concat([df, user_df], ignore_index=True).drop_duplicates(subset=["email_text"])
 
-    # save final master dataset
     df.to_csv(DATASET_PATH, index=False)
     print(f"[SUCCESS] finished. saved -> {DATASET_PATH}")
     print(f"[INFO] final master dataset size: {len(df)} rows.")
